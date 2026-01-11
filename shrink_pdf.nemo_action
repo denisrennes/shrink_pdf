@@ -1,0 +1,9 @@
+[Nemo Action]
+Name=PDF shrink
+Name[fr]=PDF réduction
+Comment=Reduce the file size of PDF files
+Comment[fr]=Réduit la taille des fichiers PDF
+Exec=shrink_pdf.sh %F
+Mimetypes=application/pdf;
+Terminal=true
+Selection=notnone
