@@ -24,8 +24,9 @@ You can then delete the directory where you cloned the GitHub repository.
 ## Uninstallation:
 Delete the files `'/usr/local/bin/shrink_pdf.sh'` and `'/usr/share/nemo/actions/shrink_pdf.nemo_action'`
 
-
 ####To do
  - multi-language feature (multi-language Bash script)
 - make it work in *Nautilus*, the default file manager in Ubuntu.
+- create a .deb package
+
 
