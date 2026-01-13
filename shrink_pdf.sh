@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
 # Try to shrink the size of PDF files, using a Ghostscript command. See: https://www.digitalocean.com/community/tutorials/reduce-pdf-file-size-in-linux
-
 # All arguments are PDF files to shrink, if possible.
+
+# For translation
+. gettext.sh
+export TEXTDOMAIN="$(basename "$0" '.sh')"
+export TEXTDOMAINDIR="$(cd "$(dirname "$0")" && pwd)/locale"
 
 
 ##### FUNCTIONS #####
@@ -54,11 +58,11 @@ function path_without_extension () {
 }
 
 # Display a given message then waits for any key to be pressed, then return
-# $1: a message to display. Optionnal. Default: "Press any key...'"
+# $1: Optional message to display. Default: "Press any key...'"
 function press_any_key () {
     echo
     if [[ -z ${1} ]]; then
-        echo 'Press any key...'
+        echo $(gettext "Press any key...")
     else
         echo "${1}"
     fi
@@ -130,7 +134,8 @@ do
     fi
 
     # Use a Ghostscript command to shrink the PDF file
-    gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${result_file}" "${input_file}"
+    # The resulting PDF file could be even smaller by using the argument “-dPDFSETTINGS=/screen,” though this would result in a loss of quality (that many consider acceptable).
+    gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${result_file}" "${input_file}"
     exit_code=$?
 
     # if the exit code is not 0 then display an error, delete the temporary result file (if any), then continue with the next file
@@ -153,8 +158,9 @@ do
     filesize_result_file=$(stat -c%s "${result_file}")        # size of the result file
     if (( ${filesize_result_file} <= ${filesize_input_file} )); then
         if [[ ${re_shrink} != 'true' ]]; then
-            mv "${input_file}" "${bak_file}"                        # rename the source file as a "bak" file
-            mv "${result_file}" "${input_file}"          # rename the shrinked file as the original file name
+            mv "${input_file}" "${bak_file}"            # rename the source file as a "bak" file
+            gio trash "${bak_file}"                     # move the (renamed) source file to the trash
+            mv "${result_file}" "${input_file}"         # rename the shrinked file as the original file name
             echo "ok: now $(divide_by_1000 ${filesize_result_file} 1) kB."
             echo "    The original file has been renamed '$(file_name "${bak_file}")' ."
         else
@@ -168,5 +174,5 @@ do
     
 done
 
-press_any_key 'Press any key to exit...'
+press_any_key $(gettext "Press any key to exit...")
 exit 0

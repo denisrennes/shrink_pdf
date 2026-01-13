@@ -3,13 +3,13 @@
 # Installation of the "PDF shrink" Nemo action 
 
 # Display a given message then waits for any key to be pressed, then return
-# $1 is mandatory: a message to display
+# $1: Optional message to display. Default: "Press any key...'"
 function press_any_key () {
-    if [ $# -ne 1 ]; then
-        return 255
+    if [ -z "$1" ]; then
+        echo 'Press any key...'
+    else
+        echo "${1}"
     fi
-    echo
-    echo $1
     read -s -n 1 
 }
 
