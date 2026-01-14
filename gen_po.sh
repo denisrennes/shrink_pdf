@@ -60,6 +60,8 @@ fi
 # set charset as UTF-8 in the result .pot file
 sed 's/charset=CHARSET/charset=UTF-8/' -i "${result_file}"
 
+echo
+
 # Create the destination directory for the translation files .po and .mo
 lang_msg_dir="${textdomaindir}/${lang}/LC_MESSAGES"
 if [[ ! -d "${lang_msg_dir}" ]]; then
@@ -73,12 +75,15 @@ if [[ ! -d "${lang_msg_dir}" ]]; then
   fi
 fi
 
+echo
+
 # Create or update the .po file for this language
 source_file="${result_file}"
 result_file="${lang_msg_dir}/${textdomain}.po"
 if [ -f "${result_file}" ]; then
   
   # update the .po file for this language
+  echo "MERGE the new '${source_file}' with the existing ${result_file}' ... "
   msgmerge --update "${result_file}" "${source_file}"
   if [[ $? == 0 ]]; then echo 'ok'; else echo 'ERROR!'; exit 10; fi 
 else
@@ -90,13 +95,19 @@ else
   if [[ $? == 0 ]]; then echo 'ok'; else echo 'ERROR!'; exit 15; fi 
 fi
 
+echo
+
 source_file=${result_file}
 echo
-echo "Edit the .po file: please type the translated texts into the lines 'msgstr \"\"', then save and close..."
+echo "You will edit the new .po file and write the translated texts into the lines 'msgstr \"\"', then save and close..."
+grep 'fuzzy' "${source_file}" 1>/dev/null 2>&1
+if [[ $? == 0 ]]; then
+  echo "WARNING: Pay attention to the translation of msgstr lines preceded by a line marked “#, fuzzy”, and THEN DELETE THE LINE “#, fuzzy” or the translation will be ignored."
+fi
+echo; read -n 1 -p 'Press any key...'
 xed "${source_file}"
 
-echo; read -n 1 -p 'Press any key...'
-
+echo
 
 # Convert the .mo file from the .po file (only .po files are used by gettext tools)
 source_file=${result_file}
@@ -106,5 +117,5 @@ msgfmt "${source_file}" -o "${result_file}"
 if [[ $? == 0 ]]; then echo 'ok'; else echo 'ERROR!'; exit 20; fi 
 
 echo
-echo "To test this language translation, just launch this command line: 'LANGUAGE=${lang} ./${textdomain}.sh'"
+echo "To test this language translation, just launch this command line: 'LANGUAGE=${lang} ./${textdomain}.sh' [... arguments]"
 

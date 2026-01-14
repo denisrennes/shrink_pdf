@@ -9,7 +9,8 @@ This tool can reduce the size of PDF files, sometimes considerably, without any 
 
 It is using a Ghostscript command.  See https://www.digitalocean.com/community/tutorials/reduce-pdf-file-size-in-linux
 
-If the PDF file is already optimized, it cannot be reduced. This tool will detect this and display a message, leaving the original PDF file unchanged.
+If the PDF file has been reduced in size, it will replace the original. The original file is renamed "... .ORIGINAL.pdf" and moved to the Trash.
+If the PDF file could not be reduced in size, it means it is already optimized. This tool will detect this and display a message, leaving the original PDF file unchanged.
 
 ## Requirements
 - Bash

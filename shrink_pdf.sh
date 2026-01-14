@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
 # Try to shrink the size of PDF files, using a Ghostscript command. See: https://www.digitalocean.com/community/tutorials/reduce-pdf-file-size-in-linux
-# All arguments are PDF files to shrink, if possible.
+# All arguments are PDF files to shrink. They can be passed by a file manager custom context menu actions, like Nemo actions.
 
-# For translation
+# If the PDF file has been reduced in size, it will replace the original. The original file is renamed "... .ORIGINAL.pdf" and moved to the Trash.
+# If the PDF file could not be reduced in size, it means it is already optimized. This tool will detect this and display a message, leaving the original PDF file unchanged.
+
+# For translations
 . gettext.sh
 export TEXTDOMAIN="$(basename "$0" '.sh')"
 export TEXTDOMAINDIR="$(cd "$(dirname "$0")" && pwd)/locale"
@@ -62,7 +65,7 @@ function path_without_extension () {
 function press_any_key () {
     echo
     if [[ -z ${1} ]]; then
-        echo $(gettext "Press any key...")
+        echo "$(gettext "Press any key...")"
     else
         echo "${1}"
     fi
@@ -83,96 +86,104 @@ function divide_by_1000 () {
 
 ##### MAIN #####
 
-TEMP_SHRINKED_SUBEXT=".TEMP_SHRINKED"                    # The temporary name of the shrinked file will end with ".${TEMP_SHRINKED_SUBEXT}.pdf"
-ORIGINAL_NOT_SHRINKED_SUBEXT=".ORIGINAL_NOT_SHRINKED"    # The new name of the original (not shrinked) PDF file will end with ".${ORIGINAL_NOT_SHRINKED_SUBEXT}.pdf"
+TEMP_SHRINKED_SUBEXT="$(gettext ".TEMP_SHRINKED")"      # The temporary name of the shrinked file will end with ".${TEMP_SHRINKED_SUBEXT}.pdf"
+ORIGINAL_SUBEXT="$(gettext ".ORIGINAL")"                # The new name of the original (not shrinked) PDF file will end with ".${ORIGINAL_SUBEXT}.pdf"
 
 # Process every file provided as arguments
 for input_file in "$@"
 do
-    filesize_input_file=$(stat -c%s "${input_file}")                # size of the original file
     echo
-    echo -n "Shrink the PDF file '${input_file}', $(divide_by_1000 ${filesize_input_file} 1) kB ... "
-    
+
     file_extension="$(file_extension "${input_file}")"                  # file extension
     filepath_minus_ext="$(path_without_extension "${input_file}")"      # input file path without extension
 
-    # normal case: the input file has not been already processed and renamed by this script
+    # normal case: the input file has NOT been already processed and renamed by this script
     source_file="${input_file}"
-    result_file="${filepath_minus_ext}${TEMP_SHRINKED_SUBEXT}${file_extension}"         # The temporary name of the result file. It will be later renamed as the original source file name.
-    bak_file=${filepath_minus_ext}${ORIGINAL_NOT_SHRINKED_SUBEXT}${file_extension}      # The new name of the original PDF file. Its current name will be used by the result shrinked PDF file.
+    result_file="${filepath_minus_ext}${TEMP_SHRINKED_SUBEXT}${file_extension}"     # The temporary name of the result file. It will be later renamed as the original source file name.
+    bak_file=${filepath_minus_ext}${ORIGINAL_SUBEXT}${file_extension}               # The future name of the original PDF file (It will be renamed if the shrinking is successful)
+    bak_file_filename="$(file_name "${bak_file}")"
 
-    re_shrink='false'   # normal case: the source file will be shrinked for the first time, then renamed
-
-    # If the original (renamed) file exists then skip this file: it is the result of a previous shrinking by this script
-    if [[ -f "${bak_file}" ]]; then 
-        echo "skipped because it is already a shrinked result file."
-        echo "    The original file is '$(file_name "${bak_file}")'"
+    # Skip the file if its corresponding original file (renamed) exists in the same directory (probably restored from the Trash)
+    if [[ -f "${bak_file}" ]]; then
+        echo "The file \"${input_file}\" is skipped because it is probably the shrinked result of \"${bak_file_filename}"\""
         continue        # next file
     fi
 
-    # If it is an original file that was previously processed by this script, so if it is already renamed .${ORIGINAL_NOT_SHRINKED_SUBEXT}${file_extension}) then
-    #   if the result file still exists then do nothing, proceed with the next file
-    #   if the result file no longer exists then shrink this file again: source is the input file already renamed, result is the original name and they will not be renamed again
+    # Skip the file if it is a file already renamed .${ORIGINAL_SUBEXT}${file_extension}): it is an original file previously processed by this script, then probably restored from the Trash.
     extension2="$(file_extension "${filepath_minus_ext}")"      # second extension
-    if [[ "${extension2}" == "${ORIGINAL_NOT_SHRINKED_SUBEXT}" ]]; then
-        filepath_minus_ext_minus_ext="$(path_without_extension "${filepath_minus_ext}")"    # remove the second extension ".${ORIGINAL_NOT_SHRINKED_SUBEXT}"
-        previous_result_file="${filepath_minus_ext_minus_ext}${file_extension}"
-        if [[ -f "${previous_result_file}" ]]; then
-            echo "skipped because already shrinked before."
-            echo "    The shrinked file is: '$(file_name "${previous_result_file}")'"
-            continue        # next file
-        else
-            # specific case: the source file has been previously already shrinked and renamed by this script. It will be shrinked again but not renamed because already renamed
-            re_shrink='true'
-            result_file="${previous_result_file}"
-        fi
+    if [[ "${extension2}" == "${ORIGINAL_SUBEXT}" ]]; then
+        echo "The file \"${input_file}\" is skipped because it has been already shrinked before. To shrink it again, rename it to its original name."
+        continue        # next file
     fi
+
+    filesize_input_file=$(stat -c%s "${input_file}")                        # size of the original file
+    filesize_input_file_kB="$(divide_by_1000 ${filesize_input_file} 1)"     # size of the original file in kB
+    
+    echo -n "Shrink the PDF file \"${input_file}\", ${filesize_input_file_kB} kB ... "
  
-    # if the result file already exists, delete it
+    # if the result file already exists, delete it  (could be the result of a previous shrinking attempt)
     if [[ -f "${result_file}" ]]; then
         rm "${result_file}"
+        if (($? != 0 )); then
+            echo "ERROR: unable to delete \"${result_file}\"."
+            continue    # next file
+        fi
     fi
 
     # Use a Ghostscript command to shrink the PDF file
-    # The resulting PDF file could be even smaller by using the argument “-dPDFSETTINGS=/screen,” though this would result in a loss of quality (that many consider acceptable).
+    # The result file could be even smaller by using the argument “-dPDFSETTINGS=/screen,” though with a higher loss of quality (that many still consider acceptable).
     gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${result_file}" "${input_file}"
     exit_code=$?
 
     # if the exit code is not 0 then display an error, delete the temporary result file (if any), then continue with the next file
     if (( ${exit_code} != 0 )); then
-        echo "ERROR: exit code ${exit_code} returned by the 'gs' command (Ghostscript)."
+        echo "ERROR: The shrinking command returned an error (exit code ${exit_code} returned by 'gs', a command from Ghostscript)."
+        # if the result file exists, delete it because it is probably corrupted (it happens sometimes with 'gs')
         if [[ -f "${result_file}" ]]; then
-            rm "${result_file}"
+            rm "${result_file}" 1>/dev/null 2>&1
         fi
-        continue
+        continue   # next file
     fi
     # if the result temporay file does not exist, display an error, then continue with the next file
     if [[ ! -f "${result_file}" ]]; then
         echo "ERROR: something went wrong, the result file does not exist."
-        continue
+        continue   # next file
     fi
 
     # Verify that the result file is actually smaller than the original: 
-    # if so, rename the source file as a "bak" file and the result file as the original file name, UNLESS it is a specific re-shrink case (renaming alredy done previously)
+    # if so, rename the source file as a "bak" file and the result file will replace it, taking its name, UNLESS it is a specific re-shrink case (renaming already done previously)
     # else delete the result file: the source file was already small
-    filesize_result_file=$(stat -c%s "${result_file}")        # size of the result file
+    filesize_result_file=$(stat -c%s "${result_file}")                      # size of the result file
+    filesize_result_file_kB="$(divide_by_1000 ${filesize_result_file} 1)"   # size of the result file in kB
+
     if (( ${filesize_result_file} <= ${filesize_input_file} )); then
-        if [[ ${re_shrink} != 'true' ]]; then
-            mv "${input_file}" "${bak_file}"            # rename the source file as a "bak" file
-            gio trash "${bak_file}"                     # move the (renamed) source file to the trash
-            mv "${result_file}" "${input_file}"         # rename the shrinked file as the original file name
-            echo "ok: now $(divide_by_1000 ${filesize_result_file} 1) kB."
-            echo "    The original file has been renamed '$(file_name "${bak_file}")' ."
-        else
-            echo "ok: now the result file is $(divide_by_1000 ${filesize_result_file} 1) kB."
-            echo "    The result file is '$(file_name "${result_file}")' ."
+
+        # ok successful shrinking
+        mv "${input_file}" "${bak_file}"            # rename the source file as a "bak" file
+        if (($? != 0 )); then
+            echo "ERROR: something went wrong. Error trying to rename the original file as \"${bak_file}\"."
         fi
+
+        gio trash "${bak_file}"                     # move the (renamed) source file to the trash
+        if (($? != 0 )); then
+            echo "ERROR: something went wrong. Error trying to move the renamed original file to the Trash."
+        fi
+
+        mv "${result_file}" "${input_file}"         # rename the shrinked file as the original file name
+        if (($? != 0 )); then
+            echo "ERROR: something went wrong. Error trying to renamed the temporary result file name \"${result_file}\" as the original file name."
+        fi
+
+        echo "ok: now ${filesize_result_file_kB} kB."
+        echo "    The original unshrinked file is now in the Trash, renamed \"${bak_file_filename}\" ."
     else
-        rm "${result_file}"
+
+        # shrinking failed: the result is not smaller
+        rm "${result_file}" 1>/dev/null 2>&1
         echo "This PDF file is already small."
     fi
     
 done
 
-press_any_key $(gettext "Press any key to exit...")
+press_any_key "$(gettext "Press any key to exit...")"
 exit 0
