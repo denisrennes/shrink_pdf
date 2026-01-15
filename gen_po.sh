@@ -43,13 +43,7 @@ source_file="${textdomain}.sh"
 result_file="${textdomain}.pot"
 echo -n "Generate '${result_file}' from '${source_file}'... "
 if [ -f "${result_file}" ]; then rm "${result_file}"; fi 
-xgettext -L Shell \
-  --keyword=gettext \
-  --keyword=_ \
-  --keyword=eval_gettext \
-  --keyword=ngettext:1,2 \
-  --keyword=eval_ngettext:1,2 \
-  -o "${result_file}" "${source_file}"
+xgettext -L Shell --from-code=UTF-8 -o "${result_file}" "${source_file}"
 if [ -f "${result_file}" ]; then 
   echo 'ok'
 else

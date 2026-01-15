@@ -1,0 +1,53 @@
+# French translations for PACKAGE package.
+# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Denis <denis@bigwhite>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-15 18:50+0100\n"
+"PO-Revision-Date: 2026-01-15 16:00+0100\n"
+"Last-Translator: Denis <denis@bigwhite>\n"
+"Language-Team: French <traduc@traduc.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: shrink_pdf.sh:68
+msgid "Press any key..."
+msgstr ""
+
+#: shrink_pdf.sh:89
+msgid ".TEMP_SHRINKED"
+msgstr ""
+
+#: shrink_pdf.sh:90
+msgid ".ORIGINAL"
+msgstr ""
+
+#: shrink_pdf.sh:108
+#, sh-format
+msgid "This is the test message 2: value=\"${value2}\""
+msgstr ""
+
+#: shrink_pdf.sh:151
+msgid "ERROR: something went wrong, the shrinking result file does not exist."
+msgstr ""
+
+#: shrink_pdf.sh:171
+msgid ""
+"ERROR: something went wrong. Error trying to move the renamed original file "
+"to the Trash."
+msgstr ""
+
+#: shrink_pdf.sh:185
+msgid "This PDF file is already small."
+msgstr ""
+
+#: shrink_pdf.sh:190
+msgid "Press any key to exit..."
+msgstr ""

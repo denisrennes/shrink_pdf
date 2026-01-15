@@ -84,7 +84,7 @@ function divide_by_1000 () {
 }
 
 
-##### MAIN #####
+##### MAIN ####
 
 TEMP_SHRINKED_SUBEXT="$(gettext ".TEMP_SHRINKED")"      # The temporary name of the shrinked file will end with ".${TEMP_SHRINKED_SUBEXT}.pdf"
 ORIGINAL_SUBEXT="$(gettext ".ORIGINAL")"                # The new name of the original (not shrinked) PDF file will end with ".${ORIGINAL_SUBEXT}.pdf"
@@ -105,27 +105,28 @@ do
 
     # Skip the file if its corresponding original file (renamed) exists in the same directory (probably restored from the Trash)
     if [[ -f "${bak_file}" ]]; then
-        echo "The file \"${input_file}\" is skipped because it is probably the shrinked result of \"${bak_file_filename}"\""
+        msg="$( eval_gettext "The file \"\${input_file}\" is skipped because it is probably the shrinked result of \"\${bak_file_filename}\"" )"
+        echo "${msg}"
         continue        # next file
     fi
 
     # Skip the file if it is a file already renamed .${ORIGINAL_SUBEXT}${file_extension}): it is an original file previously processed by this script, then probably restored from the Trash.
     extension2="$(file_extension "${filepath_minus_ext}")"      # second extension
     if [[ "${extension2}" == "${ORIGINAL_SUBEXT}" ]]; then
-        echo "The file \"${input_file}\" is skipped because it has been already shrinked before. To shrink it again, rename it to its original name."
+        echo "$( eval_gettext "The file \"\${input_file}\" is skipped because it has been already shrinked before. To shrink it again, rename it to its original name." )"
         continue        # next file
     fi
 
     filesize_input_file=$(stat -c%s "${input_file}")                        # size of the original file
     filesize_input_file_kB="$(divide_by_1000 ${filesize_input_file} 1)"     # size of the original file in kB
     
-    echo -n "Shrink the PDF file \"${input_file}\", ${filesize_input_file_kB} kB ... "
+    echo -n "$( eval_gettext "Shrink the PDF file \"\${input_file}\", \${filesize_input_file_kB} kB ... " )"
  
-    # if the result file already exists, delete it  (could be the result of a previous shrinking attempt)
+    # if the result file already exists (with its temporary name), then delete it. It could be the result of a previous shrinking attempt, interrupted before the renaming step.
     if [[ -f "${result_file}" ]]; then
         rm "${result_file}"
         if (($? != 0 )); then
-            echo "ERROR: unable to delete \"${result_file}\"."
+            echo "$( eval_gettext "ERROR: unable to delete \"\${result_file}\" before starting shrinking." )"
             continue    # next file
         fi
     fi
@@ -137,7 +138,7 @@ do
 
     # if the exit code is not 0 then display an error, delete the temporary result file (if any), then continue with the next file
     if (( ${exit_code} != 0 )); then
-        echo "ERROR: The shrinking command returned an error (exit code ${exit_code} returned by 'gs', a command from Ghostscript)."
+        echo "$( eval_gettext "ERROR: The shrinking command returned an error (exit code \${exit_code} returned by 'gs', a command from Ghostscript)." )"
         # if the result file exists, delete it because it is probably corrupted (it happens sometimes with 'gs')
         if [[ -f "${result_file}" ]]; then
             rm "${result_file}" 1>/dev/null 2>&1
@@ -146,7 +147,7 @@ do
     fi
     # if the result temporay file does not exist, display an error, then continue with the next file
     if [[ ! -f "${result_file}" ]]; then
-        echo "ERROR: something went wrong, the result file does not exist."
+        echo "$( gettext "ERROR: something went wrong, no shrinking result file." )"
         continue   # next file
     fi
 
@@ -161,29 +162,29 @@ do
         # ok successful shrinking
         mv "${input_file}" "${bak_file}"            # rename the source file as a "bak" file
         if (($? != 0 )); then
-            echo "ERROR: something went wrong. Error trying to rename the original file as \"${bak_file}\"."
+            echo "$( eval_gettext "ERROR: something went wrong after shrinking. Unable to rename the original file as \"\${bak_file}\"." )"
         fi
 
         gio trash "${bak_file}"                     # move the (renamed) source file to the trash
         if (($? != 0 )); then
-            echo "ERROR: something went wrong. Error trying to move the renamed original file to the Trash."
+            echo "$( gettext "ERROR: something went wrong after shrinking. Unable to move the renamed original file to the Trash." )"
         fi
 
         mv "${result_file}" "${input_file}"         # rename the shrinked file as the original file name
         if (($? != 0 )); then
-            echo "ERROR: something went wrong. Error trying to renamed the temporary result file name \"${result_file}\" as the original file name."
+            echo "$( eval_gettext "ERROR: something went wrong after shrinking. Unable to renamed the temporary result file name \"\${result_file}\" as the original file name." )"
         fi
 
-        echo "ok: now ${filesize_result_file_kB} kB."
-        echo "    The original unshrinked file is now in the Trash, renamed \"${bak_file_filename}\" ."
+        echo "$( eval_gettext "ok: now \${filesize_result_file_kB} kB." )"
+        echo "$( eval_gettext "The original unshrinked file is now in the Trash, renamed \"\${bak_file_filename}\" ." )"
     else
 
         # shrinking failed: the result is not smaller
         rm "${result_file}" 1>/dev/null 2>&1
-        echo "This PDF file is already small."
+        echo "$( gettext "This PDF file is already small." )"
     fi
     
 done
 
-press_any_key "$(gettext "Press any key to exit...")"
+press_any_key "$( gettext "Press any key to exit..." )"
 exit 0

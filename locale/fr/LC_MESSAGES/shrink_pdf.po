@@ -1,15 +1,15 @@
 # French translations for PACKAGE package.
-# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# Denis <denis@bigwhite>, 2026.
+# Copyright (C) 2026 Denis <denisreindeer@gmail.com>
+# This file is distributed under the same license as the shrink_pdf package.
+# Denis <denisreindeer@gmail.com>, 2026.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-13 19:55+0100\n"
-"PO-Revision-Date: 2026-01-13 19:55+0100\n"
-"Last-Translator: Denis <denis@bigwhite>\n"
+"Report-Msgid-Bugs-To: denisreindeer@gmail.com\n"
+"POT-Creation-Date: 2026-01-15 18:56+0100\n"
+"PO-Revision-Date: 2026-01-15 16:00+0100\n"
+"Last-Translator: Denis <denisreindeer@gmail.com>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -17,10 +17,104 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: shrink_pdf.sh:65
+#: shrink_pdf.sh:68
 msgid "Press any key..."
 msgstr "Appuyez sur une touche..."
 
-#: shrink_pdf.sh:177
+#: shrink_pdf.sh:89
+msgid ".TEMP_SHRINKED"
+msgstr ".TEMP_REDUIT"
+
+#: shrink_pdf.sh:90
+msgid ".ORIGINAL"
+msgstr ".ORIGINAL"
+
+#: shrink_pdf.sh:108
+#, sh-format
+msgid ""
+"The file \"${input_file}\" is skipped because it is probably the shrinked "
+"result of \"${bak_file_filename}\""
+msgstr ""
+"Le fichier \"${input_file}\" est ignoré parce que c'est probablement le "
+"résultat de la réduction de \"${bak_file_filename}\""
+
+#: shrink_pdf.sh:116
+#, sh-format
+msgid ""
+"Le fichier \"${input_file}\" is skipped because it has been already shrinked "
+"before. To shrink it again, rename it to its original name."
+msgstr ""
+"The file \"${input_file}\" est ignoré parce qu'il a déjà été réduit avant. "
+"Pour le réduire une autre fois, renommez-le avec son nom d'origine."
+
+#: shrink_pdf.sh:123
+#, sh-format
+msgid ""
+"Shrink the PDF file \"${input_file}\", ${filesize_input_file_kB} kB ... "
+msgstr ""
+"Réduction du fichier PDF \"${input_file}\", ${filesize_input_file_kB} kB ... "
+
+#: shrink_pdf.sh:129
+#, sh-format
+msgid "ERROR: unable to delete \"${result_file}\" before starting shrinking."
+msgstr "ERREUR: impossible d'effacer \"${result_file}\" avant de démmarer lé réduction."
+
+#: shrink_pdf.sh:141
+#, sh-format
+msgid ""
+"ERROR: The shrinking command returned an error (exit code ${exit_code} "
+"returned by 'gs', a command from Ghostscript)."
+msgstr ""
+"ERREUR: La commande de réduction a retourné une erreur (exit code ${exit_code} "
+"retourné par 'gs', une commande de Ghostscript)."
+
+#: shrink_pdf.sh:150
+msgid "ERROR: something went wrong, no shrinking result file."
+msgstr "ERROR: quelque chose s'est mal passé, pas de fichier résultat de la réduction."
+
+#: shrink_pdf.sh:165
+#, sh-format
+msgid ""
+"ERROR: something went wrong after shrinking. Unable to rename the original "
+"file as \"${bak_file}\"."
+msgstr ""
+"ERREUR: quelque chose s'est mal passé après la réduction. Impossible de renommer le fichier original en "
+"\"${bak_file}\"."
+
+#: shrink_pdf.sh:170
+msgid ""
+"ERROR: something went wrong after shrinking. Unable to move the renamed "
+"original file to the Trash."
+msgstr ""
+"ERREUR: quelque chose s'est mal passé après la réduction. Impossible de déplacer "
+"vers la corbeille le fichier original renommé."
+
+#: shrink_pdf.sh:175
+msgid ""
+"ERROR: something went wrong after shrinking. Unable to renamed the "
+"temporary result file name \"${result_file}\" as the original file name."
+msgstr ""
+"ERREUR: quelque chose s'est mal passé après la réduction. Impossible de "
+"renommer le fichier résultat, de son nom temporaire \"${result_file}\" vers le nom du fichier original."
+
+#: shrink_pdf.sh:178
+#, sh-format
+msgid "ok: now ${filesize_result_file_kB} kB."
+msgstr "ok: maintenant ${filesize_result_file_kB} kB."
+
+#: shrink_pdf.sh:179
+#, sh-format
+msgid ""
+"The original unshrinked file is now in the Trash, renamed "
+"\"${bak_file_filename}\" ."
+msgstr ""
+"Le fichier original non-réduit est maintenant dans la Corbeille, renommé "
+"\"${bak_file_filename}\" ."
+
+#: shrink_pdf.sh:184
+msgid "This PDF file is already small."
+msgstr "Ce fichier PDF est déjà petit."
+
+#: shrink_pdf.sh:189
 msgid "Press any key to exit..."
-msgstr "Appuyez sur une touche pour quitter..."
+msgstr "Appuyez sur une touche..."
