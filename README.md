@@ -18,6 +18,7 @@ If the PDF file could not be reduced in size, it means it is already optimized. 
 - Ghostscript
 
 ## Installation:
+2026-01-15 do not use, not updated yet...
 Clone the GitHub repository and run `./install.sh` .
 
 You can then delete the directory where you cloned the GitHub repository.
@@ -26,7 +27,6 @@ You can then delete the directory where you cloned the GitHub repository.
 Delete the files `'/usr/local/bin/shrink_pdf.sh'` and `'/usr/share/nemo/actions/shrink_pdf.nemo_action'`
 
 ####To do
- - multi-language feature (multi-language Bash script)
 - make it work in *Nautilus*, the default file manager in Ubuntu.
 - create a .deb package
 

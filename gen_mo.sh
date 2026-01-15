@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 
-# Generate translation files for a bash script using gettext
+# Generate translation files for a Bash script using gettext tools.
 # $1 The bash script path. Mandatory. 
 # $2 The language. ex: 'fr', 'fr-FR'. Mandatory.
-# Generates a .mo and .po translation files in the sub-directory ./locale/<short_lang>/LC_MESSAGES, relative to the script path.
+# 
+# Steps:
+# 1) All 'gettext' 'eval_gettext' texts are extracted from the source code, the Bash script, to generate a .pot text file in the sub-directory './locale, relative to the script path.
+# 2) Use the template .po file, to generate a .po translation text file for the $2 language, in the sub-directory './locale/<lang>/LC_MESSAGES', relative to the script path.
+# 3) The user edits the .po file to add or modify the translated texts fo rthe $2 language.
+# 4) Convert the .po text file to generate a .mo translation binary file for the $2 language, in the sub-directory ''./locale/<lang>/LC_MESSAGES', relative to the script path.
+#    Only the .mo binary files are used by gettext tools at runtime.
 
 # $1 and $2 are mandatory
 if (( $# != 2 )); then
@@ -38,9 +44,25 @@ textdomaindir="$(cd "$(dirname "$1")" && pwd)/locale"
 
 echo
 
+# Create the destination directory for the translation files .pot, .po and .mo
+lang_msg_dir="${textdomaindir}/${lang}/LC_MESSAGES"
+if [[ ! -d "${lang_msg_dir}" ]]; then
+  echo -n "Create the directory \"${lang_msg_dir}\": "
+  mkdir -p "${lang_msg_dir}"
+  if [[ $? == 0 ]]; then
+    echo "ok"
+  else
+    echo "ERROR! Unable to create the directory for the translation files."
+    exit 5
+  fi
+fi
+
+echo
+
 # Generate the .pot file, the template file for .mo files
-source_file="${textdomain}.sh"
-result_file="${textdomain}.pot"
+# All 'gettext' 'eval_gettext' texts are extracted from the source code, the Bash script, to generate a .pot text file in the sub-directory './locale, relative to the script path.
+source_file="${script_path}"
+result_file="${textdomaindir}/${script_nameonly}.pot"
 echo -n "Generate '${result_file}' from '${source_file}'... "
 if [ -f "${result_file}" ]; then rm "${result_file}"; fi 
 xgettext -L Shell --from-code=UTF-8 -o "${result_file}" "${source_file}"
@@ -56,22 +78,8 @@ sed 's/charset=CHARSET/charset=UTF-8/' -i "${result_file}"
 
 echo
 
-# Create the destination directory for the translation files .po and .mo
-lang_msg_dir="${textdomaindir}/${lang}/LC_MESSAGES"
-if [[ ! -d "${lang_msg_dir}" ]]; then
-  echo -n "Create the directory \"${lang_msg_dir}\": "
-  mkdir -p "${lang_msg_dir}"
-  if [[ $? == 0 ]]; then
-    echo "ok"
-  else
-    echo "ERROR! Unable to create the directory for the translation files."
-    exit 5
-  fi
-fi
-
-echo
-
 # Create or update the .po file for this language
+# Use the template .po file, to generate a .po translation text file for the $2 language, in the sub-directory './locale/<lang>/LC_MESSAGES', relative to the script path.
 source_file="${result_file}"
 result_file="${lang_msg_dir}/${textdomain}.po"
 if [ -f "${result_file}" ]; then
@@ -91,6 +99,7 @@ fi
 
 echo
 
+# The user edits the .po file to add or modify the translated texts fo rthe $2 language.
 source_file=${result_file}
 echo
 echo "You will edit the new .po file and write the translated texts into the lines 'msgstr \"\"', then save and close..."
@@ -103,7 +112,8 @@ xed "${source_file}"
 
 echo
 
-# Convert the .mo file from the .po file (only .po files are used by gettext tools)
+# Convert the .po text file to generate a .mo translation binary file for the $2 language, in the sub-directory ''./locale/<lang>/LC_MESSAGES', relative to the script path. 
+# Only the .mo binary files are used by gettext tools at runtime.
 source_file=${result_file}
 result_file="${lang_msg_dir}/${textdomain}.mo"
 echo -n "Generate '${result_file}' from '${source_file}'... "
