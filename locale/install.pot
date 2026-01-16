@@ -1,0 +1,86 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-16 18:29+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: install.sh:16
+msgid "Press any key..."
+msgstr ""
+
+#: install.sh:28
+msgid " [y/n]: "
+msgstr ""
+
+#: install.sh:33
+msgid "Y"
+msgstr ""
+
+#: install.sh:34
+msgid "N"
+msgstr ""
+
+#: install.sh:51
+msgid "PDF shrink"
+msgstr ""
+
+#: install.sh:55
+#, sh-format
+msgid ""
+"This will install a shell command \"${script_filename}\" and a new "
+"\"${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, the "
+"file manager."
+msgstr ""
+
+#: install.sh:56
+msgid "Continue?"
+msgstr ""
+
+#: install.sh:57 install.sh:70
+msgid "Installation canceled by the user."
+msgstr ""
+
+#: install.sh:67
+msgid "Warning: the file manager \"Nemo\" is not detected."
+msgstr ""
+
+#: install.sh:68
+#, sh-format
+msgid ""
+"If choose to continue, the shell command \"${script_filename}\" will be "
+"available but the Nemo context menu entry (right-click) will not be "
+"installed."
+msgstr ""
+
+#: install.sh:79 install.sh:89 install.sh:98
+#, sh-format
+msgid "Install \"${source_file_path}\" to \"${dest_file_path}\" ... "
+msgstr ""
+
+#: install.sh:82 install.sh:92 install.sh:101
+msgid "ok."
+msgstr ""
+
+#: install.sh:105
+#, sh-format
+msgid ""
+"You may have to close and relaunch the file manager Nemo to use the new "
+"\"${nemo_action_menu}\" context menu entry for PDF files."
+msgstr ""
+
+#: install.sh:107
+msgid "Press any key to exit..."
+msgstr ""

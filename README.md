@@ -13,21 +13,22 @@ If the PDF file has been reduced in size, it will replace the original. The orig
 If the PDF file could not be reduced in size, it means it is already optimized. This tool will detect this and display a message, leaving the original PDF file unchanged.
 
 ## Requirements
-- Bash
 - Nemo File Manager
 - Ghostscript
+- Bash
 
 ## Installation:
-2026-01-15 do not use, not updated yet...
 Clone the GitHub repository and run `./install.sh` .
 
 You can then delete the directory where you cloned the GitHub repository.
 
 ## Uninstallation:
-Delete the files `'/usr/local/bin/shrink_pdf.sh'` and `'/usr/share/nemo/actions/shrink_pdf.nemo_action'`
+Delete these files:
+
+- `'/usr/bin/shrink_pdf.sh'`
+- `'/usr/share/nemo/actions/shrink_pdf.nemo_action'`
+- `'/usr/share/locale/fr/shrink_pdf.mo'`
 
 ####To do
 - make it work in *Nautilus*, the default file manager in Ubuntu.
 - create a .deb package
-
-

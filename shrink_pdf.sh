@@ -9,7 +9,11 @@
 # For translations
 . gettext.sh
 export TEXTDOMAIN="$(basename "$0" '.sh')"
-export TEXTDOMAINDIR="$(cd "$(dirname "$0")" && pwd)/locale"
+TEXTDOMAINDIR="$(cd "$(dirname "$0")" && pwd)/locale"
+if [ ! -d ${TEXTDOMAINDIR} ]: then
+    TEXTDOMAINDIR="/usr/share/locale"
+fi
+export TEXTDOMAINDIR
 
 
 ##### FUNCTIONS #####

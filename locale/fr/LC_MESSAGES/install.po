@@ -1,0 +1,94 @@
+# French translations for PACKAGE package.
+# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Denis <denis@bigwhite>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-16 18:23+0100\n"
+"PO-Revision-Date: 2026-01-16 16:42+0100\n"
+"Last-Translator: Denis <denis@bigwhite>\n"
+"Language-Team: French <traduc@traduc.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: install.sh:16
+msgid "Press any key..."
+msgstr "Appuyez sur une touche..."
+
+#: install.sh:28
+msgid " [y/n]: "
+msgstr " [o/n] "
+
+#: install.sh:33
+msgid "Y"
+msgstr "O"
+
+#: install.sh:34
+msgid "N"
+msgstr "N"
+
+#: install.sh:51
+msgid "PDF shrink"
+msgstr "PDF réduction"
+
+#: install.sh:55
+#, sh-format
+msgid ""
+"This will install a shell command \"${script_filename}\" and a new "
+"\"${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, the "
+"file manager."
+msgstr ""
+"Cela va installer une commande shell \"${script_filename}\" et un nouveau choix "
+"\"${nemo_action_menu}\" dans le menu contextuel (\"clic-droit\") de Nemo le gestionnaire de fichiers."
+
+#: install.sh:56
+msgid "Continue?"
+msgstr "Continuer ?"
+
+#: install.sh:57 install.sh:70
+msgid "Installation canceled by the user."
+msgstr "Installation annulée par l'utilisateur."
+
+#: install.sh:67
+msgid "Warning: the file manager \"Nemo\" is not detected."
+msgstr "Attention: le gestionnaire de fichiers \"Nemo\" n'est pas détecté."
+
+#: install.sh:68
+#, sh-format
+msgid ""
+"If choose to continue, the shell command \"${script_filename}\" will be "
+"available but the Nemo context menu entry (right-click) will not be "
+"installed."
+msgstr ""
+"Si vous choisissez de continuer, la commande shell \"${script_filename}\" "
+"sera disponible mais le menu contextuel (\"clic-droit\") de Nemo ne sera pas "
+"installé."
+
+#: install.sh:79 install.sh:89 install.sh:98
+#, sh-format
+msgid "Install \"${source_file_path}\" to \"${dest_file_path}\" ... "
+msgstr "Installation de \"${source_file_path}\" vers \"${dest_file_path}\" ... "
+
+#: install.sh:82 install.sh:92 install.sh:101
+msgid "ok."
+msgstr "ok."
+
+#: install.sh:105
+#, sh-format
+msgid ""
+"You may have to close and relaunch the file manager Nemo to use the new "
+"\"${nemo_action_menu}\" context menu entry for PDF files."
+msgstr ""
+"Vous aurez peut-être à fermer et relancer le gestionnaire de fichiers Nemo "
+"pour utiliser le nouveau choix \"${nemo_action_menu}\" du menu contextuel "
+"des fichiers PDF."
+
+#: install.sh:107
+msgid "Press any key to exit..."
+msgstr "Appuyez sur une touche pour sortir..."
