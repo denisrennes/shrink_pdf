@@ -36,6 +36,7 @@ function yes_or_no () {
     done
 }
 
+
 # Source directory: where is this script currently running
 source_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
@@ -50,33 +51,45 @@ nemo_action_filename="shrink_pdf.nemo_action"
 nemo_actions_directory="/usr/share/nemo/actions"
 nemo_action_menu="$(gettext "PDF shrink")"
 
+# Is Nemo present?
+if command -v nemo 1>/dev/null 2>&1 && [ -d "${nemo_actions_directory}" ]; then 
+    nemo_present=true
+else
+    nemo_present=false
+fi
+
 # Install confirmation
 echo
-echo "$( eval_gettext "This will install a shell command \"\${script_filename}\" and a new \"\${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, the file manager." )"
+echo "$( eval_gettext "This will install a shell command \"\${script_filename}\"." )"
+if [ $nemo_present ]; then
+    echo "$( eval_gettext "This will also install a new \"\${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, the file manager, for PDF files." )"
+else
+    echo "$( eval_gettext "As the file manager Nemo has NOT been detected, this will NOT install a new \"\${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, for PDF files." )"
+fi
 if ! yes_or_no "$(gettext "Continue?")"; then
-    echo "$(gettext "Installation canceled by the user.")"
-    exit 1
+    echo "$(gettext "Canceled, ok.")"
+    exit 2
 fi 
 
-# Warning if nemo is not detected
-if ( command -v nemo 1>/dev/null 2>&1 ) && [ -d "${nemo_actions_directory}" ]; then 
-    nemo_present="true"
-else
-    nemo_present="false"
-    echo
-    echo "$(gettext "Warning: the file manager \"Nemo\" is not detected.")" 
-    echo "$( eval_gettext "If choose to continue, the shell command \"\${script_filename}\" will be available but the Nemo context menu entry ("right-click") will not be installed." )"
-    if ! yes_or_no "$(getetxt "Continue?")"; then
-        echo "$(gettext "Installation canceled by the user.")"
-        exit 1
-    fi
+echo
+
+# Ask for elevated privileges (sudo)
+echo -n "$( gettext "We need elevated privileges to install: " )"
+sudo -v
+if [ $? -ne 0 ]; then
+    echo "$( gettext "Installation canceled: Failed to get elevated privileges (sudo)." )"
+    exit 1
 fi
+echo "$( gettext "ok for elevated privileges (sudo).")"
+
+echo
 
 # Install the script for all users of the system, in /usr/bin (should be in $PATH)
 file_name="${script_filename}"
 source_file_path="${source_dir}/${file_name}"
-dest_file_path="${script_directory}/${script_filename}"
-echo -n "$( eval_gettext "Install \"\${source_file_path}\" to \"\${dest_file_path}\" ... " )"
+dest_directory="${script_directory}"
+dest_file_path="${dest_directory}/${script_filename}"
+echo -n "$( eval_gettext "Installation of \"\${file_name}\" to \"\${dest_directory}\" ... " )"
 sudo cp "${source_file_path}" "${dest_file_path}"
 sudo chmod u=rwx,g=rx,o=rx "${dest_file_path}"
 echo "$(gettext "ok.")"
@@ -85,25 +98,32 @@ echo "$(gettext "ok.")"
 lang="fr"
 file_name="${locale_file_filename}"
 source_file_path="${source_dir}/locale/${lang}/LC_MESSAGES/${file_name}"
-dest_file_path="${locale_directory}/${lang}/LC_MESSAGES/${locale_file_filename}"
-echo -n "$( eval_gettext "Install \"\${source_file_path}\" to \"\${dest_file_path}\" ... " )"
+dest_directory="${locale_directory}/${lang}/LC_MESSAGES"
+dest_file_path="${dest_directory}/${locale_file_filename}"
+echo -n "$( eval_gettext "Installation of \"\${file_name}\" to \"\${dest_directory}\" ... " )"
 sudo cp "${source_file_path}" "${dest_file_path}"
 sudo chmod u=rw,g=r,o=r "${dest_file_path}"
 echo "$(gettext "ok.")"
 
-# Install the Nemo action for all users of the system
-file_name="${nemo_action_filename}"
-source_file_path="${source_dir}/${file_name}"
-dest_file_path="${nemo_actions_directory}/${nemo_action_filename}"
-echo -n "$( eval_gettext "Install \"\${source_file_path}\" to \"\${dest_file_path}\" ... " )"
-sudo cp "${source_file_path}" "${dest_file_path}"
-sudo chmod u=rw,g=r,o=r "${dest_file_path}"
-echo "$(gettext "ok.")"
+# If Nemo is present, install the Nemo action for all users of the system
+if [ $nemo_present ]; then
+    file_name="${nemo_action_filename}"
+    source_file_path="${source_dir}/${file_name}"
+    dest_directory="${nemo_actions_directory}"
+    dest_file_path="${dest_directory}/${nemo_action_filename}"
+    echo -n "$( eval_gettext "Installation of \"\${file_name}\" to \"\${dest_directory}\" ... " )"
+    sudo cp "${source_file_path}" "${dest_file_path}"
+    sudo chmod u=rw,g=r,o=r "${dest_file_path}"
+    echo "$(gettext "ok.")"
+fi
 
 # The End
 echo
-echo "$( eval_gettext "You may have to close and relaunch the file manager Nemo to use the new \"\${nemo_action_menu}\" context menu entry for PDF files." )"
+echo "$(gettext "The installation succeeded.")"
+if [ $nemo_present ]; then
+    echo "$( eval_gettext "You may have to close and relaunch the file manager Nemo to use the new \"\${nemo_action_menu}\" context menu entry for PDF files." )"
+fi
 
-press_any_key "$(gettext "Press any key to exit...")"
+press_any_key
 exit 0
 
