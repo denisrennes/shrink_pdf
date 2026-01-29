@@ -1,11 +1,10 @@
 # shrink_pdf
 
-This tool can reduce the size of PDF files, sometimes considerably, without any noticeable loss of quality, at least for standard scanned documents.  
+This tool reduces the size of PDF files, sometimes considerably, without any noticeable loss of quality, at least for common documents, and without using a website (which can sometimes be dubious...).  
 
-It is useful because PDF files can be unnecessarily large, for example when they are the result of scanning. (Although this depends on the scanning software and their settings.)  
-Large PDF files can be a problem, for example when you cannot send it as an attached document in an email, or upload it to a web site, because it is too big.
+This is useful because PDF files are often unnecessarily large, typically when they are scanned (although this depends on the scanning software and its settings).  
+Large PDF files can be problematic, for example when you cannot send them as email attachments or upload them to a website because they are too large.
 
-It is using a Ghostscript command.  See https://www.digitalocean.com/community/tutorials/reduce-pdf-file-size-in-linux
 
 ##Usage:
 - Command line: **shrink_pdf  [ files ] ...**
@@ -17,14 +16,14 @@ If the PDF file could not be reduced in size, it means it is already optimized. 
 ## Requirements
 - **gs** command (Ghostscript)
 - **bc** command (Basic Calulator: present in most Linux distributions)
-- Bash
-- Optional: **Nemo** file manager, to use the context menu entry in the file manager.
+- **Bash**
+- **Nemo** file manager, to use the context menu entry in the file manager.
 
 ## Installation:
 - Clone the GitHub repository or download the package from the GitHub project.
 - Run `./install.sh` .
 
-You can then delete the directory where you cloned the GitHub repository.
+You can then delete the directory where you cloned or downloaded the GitHub repository.
 
 ## Uninstallation:
 Delete these files:
@@ -33,7 +32,11 @@ Delete these files:
 - `'/usr/share/nemo/actions/shrink_pdf.nemo_action'`
 - `'/usr/share/locale/fr/shrink_pdf.mo'`
 
+## Under the hood
+**shrink_pdf** is using a Ghostscript command.  See https://www.digitalocean.com/community/tutorials/reduce-pdf-file-size-in-linux
+
 ####To do
 - Create man pages (doc for the command)
 - make it work in *Nautilus*, the default file manager in Ubuntu.
 - create a .deb package
+shrink_pdf

@@ -3,7 +3,7 @@
 # Try to shrink the size of PDF files, using a Ghostscript command. See: https://www.digitalocean.com/community/tutorials/reduce-pdf-file-size-in-linux
 # All arguments are PDF files to shrink. They can be passed by a file manager custom context menu actions, like Nemo actions.
 
-# If the size of the PDF file has actually been reduced, the original file is renamed ‘.ORIGINAL.pdf’ and the new compressed file takes its name.
+# If the size of the PDF file has actually been reduced (at least 1 % shrinked), then the original file is renamed ‘.ORIGINAL.pdf’ and the new compressed file takes its name.
 # If the PDF file could not be reduced in size, it means it is already optimized. This tool will detect this and display a message, leaving the original PDF file unchanged.
 
 # For translations
@@ -84,29 +84,49 @@ function divide_by_1000 () {
     if (( $# != 2 )); then
         return 255
     fi
-    echo $(echo "scale=$2; $1/1000" | bc) 
+    echo "scale=$2; $1/1000" | bc -l
 }
 
 # Compute the shrink percentage
 # $1 is the original size
 # $2 is the new size
 # Return the result to the Standard Output
-# Example: return "-96.8" if $1 is 5808000 and $2 is 184000
+# Example: return "96.8" if $1 is 5808000 and $2 is 184000
 function shrink_percent () {
     if (( $# != 2 )); then
         return 255
     fi
-    echo $(echo "scale=1; $2*100/$1-100" | bc)
+    echo "scale=1; 100-$2*100/$1" | bc -l
 }
 
 
 ##### MAIN ####
 
+# parsing arguments: "--press_any_key" or a file path
+press_any_key=false
+files=()
+for arg in "$@"; do
+    case "$arg" in
+        --press_any_key)
+            press_any_key=true
+            ;;
+        --* | -*)
+            echo "$(eval_gettext "ERROR: Incorrect command line argument \"\${arg}\"." )" >&2
+            exit 1
+            ;;
+        *)
+            files+=("$arg")
+            ;;
+    esac
+done
+
+
+
 TEMP_SHRINKED_SUBEXT="$(gettext ".TEMP_SHRINKED")"      # The temporary name of the shrinked file will end with ".TEMP_SHRINKED.pdf"
 ORIGINAL_SUBEXT="$(gettext ".ORIGINAL")"                # "bak" file name: the new name of the original PDF file will end with ".ORIGINAL.pdf"
 
 # Process every file provided as arguments
-for input_file in "$@"
+for input_file in "${files[@]}"
 do
     echo
 
@@ -121,7 +141,7 @@ do
 
     # Skip the file if its corresponding original file (renamed as a "bak" file) exists in the same directory
     if [[ -f "${bak_file}" ]]; then
-        msg="$( eval_gettext "The file \"\${input_file}\" is skipped because it is probably the shrinked result of \"\${bak_file_filename}\"" )"
+        msg="$( eval_gettext "\"\${input_file}\" is skipped because it is probably the shrinked result of \"\${bak_file_filename}\"" )"
         echo "${msg}"
         continue        # next file
     fi
@@ -129,20 +149,20 @@ do
     # Skip the file if it is a file already renamed .${ORIGINAL_SUBEXT}${file_extension}): it is an original file previously processed by this script.
     extension2="$(file_extension "${filepath_minus_ext}")"      # second extension
     if [[ "${extension2}" == "${ORIGINAL_SUBEXT}" ]]; then
-        echo "$( eval_gettext "The file \"\${input_file}\" is skipped because it has been already shrinked before. To shrink it again, rename it to its original name." )"
+        echo "$( eval_gettext "\"\${input_file}\" is skipped because it has been already shrinked before. To shrink it again, rename it to its original name." )"
         continue        # next file
     fi
 
     filesize_input_file=$(stat -c%s "${input_file}")                        # size of the original file
     filesize_input_file_kB="$(divide_by_1000 ${filesize_input_file} 1)"     # size of the original file in kB
     
-    echo -n "$( eval_gettext "Shrink the PDF file \"\${input_file}\", \${filesize_input_file_kB} kB ... " )"
+    echo -n "$( eval_gettext "\"\${input_file}\", \${filesize_input_file_kB} kB ... " )"
  
     # if the result file already exists (with its temporary name), then delete it. It could be the result of a previous shrinking attempt, interrupted before the renaming step.
     if [[ -f "${result_file}" ]]; then
         rm "${result_file}"
         if (($? != 0 )); then
-            echo "$( eval_gettext "ERROR: unable to delete \"\${result_file}\" before starting shrinking." )"
+            echo "$( eval_gettext "ERROR: unable to delete \"\${result_file}\" before starting shrinking." )" >&2
             continue    # next file
         fi
     fi
@@ -154,7 +174,7 @@ do
 
     # if the exit code is not 0 then display an error, delete the temporary result file (if any), then continue with the next file
     if (( ${exit_code} != 0 )); then
-        echo "$( eval_gettext "ERROR: The shrinking command returned an error (exit code \${exit_code} returned by 'gs', a command from Ghostscript)." )"
+        echo "$( eval_gettext "ERROR: The shrinking command returned an error (exit code \${exit_code} returned by 'gs', a command from Ghostscript)." )" >&2
         # if the result file exists, delete it because it is probably corrupted (it happens sometimes with 'gs')
         if [[ -f "${result_file}" ]]; then
             rm "${result_file}" 1>/dev/null 2>&1
@@ -167,36 +187,36 @@ do
         continue   # next file
     fi
 
-    # Verify that the result file is actually smaller than the original: 
+    # Verify that the result file is at least 1% smaller than the original: 
     # if so, rename the source file as a "bak" file and the result file will replace it, taking its name, 
     # else delete the result file: the source file was already small
     filesize_result_file=$(stat -c%s "${result_file}")                              # size of the result file
     filesize_result_file_kB="$(divide_by_1000 ${filesize_result_file} 1)"           # size of the result file in kB
     shrink_pc="$(shrink_percent ${filesize_input_file} ${filesize_result_file})"    # shrink percentage
 
-    if (( ${filesize_result_file} <= ${filesize_input_file} )); then
+    if (( $(echo "$shrink_pc >= 1" | bc -l) )); then   # Is the shrink percentage higher or equal to 1 % ?
 
         # ok successful shrinking
         mv "${input_file}" "${bak_file}"            # rename the source file as a "bak" file
         if (($? != 0 )); then
-            echo "$( eval_gettext "ERROR: something went wrong after shrinking. Unable to rename the original file as \"\${bak_file}\"." )"
+            echo "$( eval_gettext "ERROR: something went wrong after shrinking. Unable to rename the original file as \"\${bak_file}\"." )" >&2
         fi
 
         mv "${result_file}" "${input_file}"         # rename the shrinked file as the original file name
         if (($? != 0 )); then
-            echo "$( eval_gettext "ERROR: something went wrong after shrinking. Unable to renamed the temporary result file name \"\${result_file}\" as the original file name." )"
+            echo "$( eval_gettext "ERROR: something went wrong after shrinking. Unable to renamed the temporary result file name \"\${result_file}\" as the original file name." )" >&2
         fi
 
-        echo "$( eval_gettext "ok: now \${filesize_result_file_kB} kB ( ${shrink_pc} % )." )"
+        echo "$( eval_gettext "ok: now \${filesize_result_file_kB} kB ( ${shrink_pc} % shrinked )." )"
         echo "$( eval_gettext "The original unshrinked file is now renamed \"\${bak_file_filename}\" ." )"
     else
 
-        # shrinking failed: the result is not smaller
+        # shrinking failed: the shrink percentage is less than 1%
         rm "${result_file}" 1>/dev/null 2>&1
         echo "$( gettext "This PDF file is already small." )"
     fi
     
 done
 
-press_any_key "$( gettext "Press any key to exit..." )"
+if [ ${press_any_key} = true ]; then press_any_key "$( gettext "Press any key to exit..." )"; fi
 exit 0
