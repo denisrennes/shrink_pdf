@@ -1,5 +1,5 @@
 [Nemo Action]
-Name=PDF shrink
+Name=Shrink PDF
 Name[fr]=PDF réduction
 Comment=Reduce the file size of PDF files
 Comment[fr]=Réduit la taille des fichiers PDF

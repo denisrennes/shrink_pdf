@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Installation of the shrink_pdf.sh command and the "PDF Shrink" Nemo action if Nemo is detected
+# Installation of the shrink_pdf.sh command and the "Shrink PDF" Nemo action if Nemo is detected
 
 # For translations
 . gettext.sh
@@ -49,7 +49,19 @@ locale_directory="/usr/share/locale"
 # install location for the Nemo action
 nemo_action_filename="shrink_pdf.nemo_action"
 nemo_actions_directory="/usr/share/nemo/actions"
-nemo_action_menu="$(gettext "PDF shrink")"
+nemo_action_menu="$(gettext "Shrink PDF")"
+
+# Error exit if "gs" is not installed (Ghostscript command)
+command -v gs >/dev/null 2>&1 || {
+    echo "$(gettext "ERROR: The \"gs\" command is required but not installed. (Ghostscript)" )" >&2
+    exit 1
+}
+
+# Error exit if "bc" is not installed (Basic Calculator)
+command -v bc >/dev/null 2>&1 || {
+    echo "$(gettext "ERROR: The \"bc\" command is required but not installed. (Basic Calulator)" )" >&2
+    exit 1
+}
 
 # Is Nemo present?
 if command -v nemo 1>/dev/null 2>&1 && [ -d "${nemo_actions_directory}" ]; then 
