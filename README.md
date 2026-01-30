@@ -39,4 +39,3 @@ Delete these files:
 - Create man pages (doc for the command)
 - make it work in *Nautilus*, the default file manager in Ubuntu.
 - create a .deb package
-shrink_pdf

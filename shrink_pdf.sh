@@ -16,7 +16,55 @@ fi
 export TEXTDOMAINDIR
 
 
-##### FUNCTIONS #####
+##### FUNCTIONS and basic initialization #####
+
+# it will be a "press any key" prompt before any exit, until the script arguments are parsed for the --press_any_key option
+press_any_key=true
+
+# Colors and highligh in outputs
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BOLD=$(tput bold)
+RESET=$(tput sgr0)
+
+ERR="${RED}${BOLD}"
+OK="${GREEN}${BOLD}"
+WARN="${YELLOW}${BOLD}"
+HIGHLIGHT="${BOLD}"
+
+# Display a given message then waits for any key to be pressed, then return
+# $1: Optional message to display. Default: "Press any key...'"
+function press_any_key () {
+    echo
+    if [[ -z ${1} ]]; then
+        echo -n "$(eval_gettext "\${HIGHLIGHT}Press any key...\${RESET}")"
+    else
+        echo -n "${1}"
+    fi
+    read -s -n 1
+    echo
+}
+
+# Exit this script with an exit code, possibly after a "press any key"
+function exit_script () {
+    local exit_message
+    if [[ -z ${2} ]]; then
+        exit_message="$(eval_gettext "\${HIGHLIGHT}Press any key to finish...\${RESET}")"
+    else
+        exit_message="${2}"
+    fi
+    if [ ${press_any_key} = true ]; then press_any_key "${exit_message}"; fi
+
+    if [[ -z ${1} ]]; then
+        exit 255
+    else
+        exit ${1}
+    fi
+}
+
+# number of files having failed to be shrinked by 'gs' (could be due to this file, so non-fatal failure, process continued to the next file)
+nb_file_failed=0
 
 
 # File base name, with the extension, if any
@@ -64,18 +112,6 @@ function path_without_extension () {
     fi
 }
 
-# Display a given message then waits for any key to be pressed, then return
-# $1: Optional message to display. Default: "Press any key...'"
-function press_any_key () {
-    echo
-    if [[ -z ${1} ]]; then
-        echo "$(gettext "Press any key...")"
-    else
-        echo "${1}"
-    fi
-    read -s -n 1 
-}
-
 # Divide a number by 1000 with a required number of digits after the decimal point
 # $1 is the number to divide by 1000
 # $2 is the required number of digits after the decimal point
@@ -100,7 +136,22 @@ function shrink_percent () {
 }
 
 
+
 ##### MAIN ####
+
+
+# Error exit if "gs" is not installed (Ghostscript command)
+command -v gs  1>/dev/null 2>&1 || {
+    echo "$(eval_gettext "\${ERR}ERROR: The \"gs\" command is required but not installed. (Ghostscript)\${RESET}" )" 1>&2
+    exit_script 1
+}
+
+# Error exit if "bc" is not installed (Basic Calculator)
+command -v bc  1>/dev/null 2>&1 || {
+    echo "$(eval_gettext "\${ERR}ERROR: The \"bc\" command is required but not installed. (Basic Calulator)\${RESET}" )" 1>&2
+    exit_script 1
+}
+
 
 # parsing arguments: "--press_any_key" or a file path
 press_any_key=false
@@ -111,15 +162,14 @@ for arg in "$@"; do
             press_any_key=true
             ;;
         --* | -*)
-            echo "$(eval_gettext "ERROR: Incorrect command line argument \"\${arg}\"." )" >&2
-            exit 1
+            echo "$(eval_gettext "\${ERR}ERROR: Incorrect command line argument \"\${arg}\".\${RESET}" )" 1>&2
+            exit_script 1
             ;;
         *)
             files+=("$arg")
             ;;
     esac
 done
-
 
 
 TEMP_SHRINKED_SUBEXT="$(gettext ".TEMP_SHRINKED")"      # The temporary name of the shrinked file will end with ".TEMP_SHRINKED.pdf"
@@ -134,14 +184,18 @@ do
     filepath_minus_ext="$(path_without_extension "${input_file}")"      # input file path without extension
 
     # normal case: the input file has NOT been already processed and renamed by this script
-    source_file="${input_file}"
     result_file="${filepath_minus_ext}${TEMP_SHRINKED_SUBEXT}${file_extension}"     # The temporary name of the result file. It will be later renamed as the original source file name.
     bak_file=${filepath_minus_ext}${ORIGINAL_SUBEXT}${file_extension}               # The future name of the original PDF file (It will be renamed if the shrinking is successful)
+    
+    # file names for shorter output messages
+    input_file_filename="$(file_name "${input_file}")"
     bak_file_filename="$(file_name "${bak_file}")"
+
+    echo -n "$( eval_gettext ">>> \${HIGHLIGHT}\${input_file_filename}\${RESET} <<< " )"
 
     # Skip the file if its corresponding original file (renamed as a "bak" file) exists in the same directory
     if [[ -f "${bak_file}" ]]; then
-        msg="$( eval_gettext "\"\${input_file}\" is skipped because it is probably the shrinked result of \"\${bak_file_filename}\"" )"
+        msg="$( eval_gettext "\${WARN}SKIPPED\${RESET} because it is probably the shrinking result of \"\${bak_file_filename}\"" )"
         echo "${msg}"
         continue        # next file
     fi
@@ -149,42 +203,44 @@ do
     # Skip the file if it is a file already renamed .${ORIGINAL_SUBEXT}${file_extension}): it is an original file previously processed by this script.
     extension2="$(file_extension "${filepath_minus_ext}")"      # second extension
     if [[ "${extension2}" == "${ORIGINAL_SUBEXT}" ]]; then
-        echo "$( eval_gettext "\"\${input_file}\" is skipped because it has been already shrinked before. To shrink it again, rename it to its original name." )"
+        echo "$( eval_gettext "\${WARN}SKIPPED\${RESET} because it has been already shrinked before. To shrink it again, rename it: remove \"\${ORIGINAL_SUBEXT}\"." )"
         continue        # next file
     fi
 
     filesize_input_file=$(stat -c%s "${input_file}")                        # size of the original file
     filesize_input_file_kB="$(divide_by_1000 ${filesize_input_file} 1)"     # size of the original file in kB
     
-    echo -n "$( eval_gettext "\"\${input_file}\", \${filesize_input_file_kB} kB ... " )"
- 
     # if the result file already exists (with its temporary name), then delete it. It could be the result of a previous shrinking attempt, interrupted before the renaming step.
     if [[ -f "${result_file}" ]]; then
         rm "${result_file}"
         if (($? != 0 )); then
-            echo "$( eval_gettext "ERROR: unable to delete \"\${result_file}\" before starting shrinking." )" >&2
-            continue    # next file
+            echo "$( eval_gettext "\${ERR}ERROR: unable to delete \"\${result_file}\" before starting shrinking. Check access rights.\${RESET}" )" 1>&2
+            exit_script 1
         fi
     fi
 
     # Use a Ghostscript command to shrink the PDF file
     # The result file could be even smaller by using the argument “-dPDFSETTINGS=/screen,” though with a higher loss of quality (that many still consider acceptable).
-    gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${result_file}" "${input_file}"
+    gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${result_file}" "${input_file}"  1>/dev/null 2>&1
     exit_code=$?
 
     # if the exit code is not 0 then display an error, delete the temporary result file (if any), then continue with the next file
     if (( ${exit_code} != 0 )); then
-        echo "$( eval_gettext "ERROR: The shrinking command returned an error (exit code \${exit_code} returned by 'gs', a command from Ghostscript)." )" >&2
+        echo "$( eval_gettext "\${ERR}ERROR: The shrinking command failed and returned an error. Most likely this is not a valid PDF file.\${RESET}" )" 1>&2
         # if the result file exists, delete it because it is probably corrupted (it happens sometimes with 'gs')
         if [[ -f "${result_file}" ]]; then
-            rm "${result_file}" 1>/dev/null 2>&1
+            rm "${result_file}"  1>/dev/null
+            if (($? != 0 )); then
+                echo "$( eval_gettext "\${ERR}ERROR: something went wrong trying to delete the result file. Check access rights.\${RESET}" )" 1>&2
+            fi
         fi
+        ((nb_file_failed+=1))       # non-fatal failure: could be due to the file itself, so we continue to the next file
         continue   # next file
     fi
     # if the result temporay file does not exist, display an error, then continue with the next file
     if [[ ! -f "${result_file}" ]]; then
-        echo "$( gettext "ERROR: something went wrong, no shrinking result file." )"
-        continue   # next file
+        echo "$( eval_gettext "\${ERR}ERROR: something went wrong, no shrinking result file.\${RESET}" )"
+        exit_script 1
     fi
 
     # Verify that the result file is at least 1% smaller than the original: 
@@ -192,31 +248,57 @@ do
     # else delete the result file: the source file was already small
     filesize_result_file=$(stat -c%s "${result_file}")                              # size of the result file
     filesize_result_file_kB="$(divide_by_1000 ${filesize_result_file} 1)"           # size of the result file in kB
-    shrink_pc="$(shrink_percent ${filesize_input_file} ${filesize_result_file})"    # shrink percentage
+    shrink_percent="$(shrink_percent ${filesize_input_file} ${filesize_result_file})"    # shrink percentage
 
-    if (( $(echo "$shrink_pc >= 1" | bc -l) )); then   # Is the shrink percentage higher or equal to 1 % ?
 
-        # ok successful shrinking
-        mv "${input_file}" "${bak_file}"            # rename the source file as a "bak" file
-        if (($? != 0 )); then
-            echo "$( eval_gettext "ERROR: something went wrong after shrinking. Unable to rename the original file as \"\${bak_file}\"." )" >&2
+    if (( $(echo "$shrink_percent < 1" | bc -l) )); then
+    
+        # The shrink percentage is less than 1%. Moreover it might be negative, meaning the result file is bigger
+        echo "$( eval_gettext "\${WARN}NOT shrinked:\${RESET} most likely this file is already as small as possible." )"
+
+        # Delete the result file
+        rm "${result_file}"  1>/dev/null
+        if (($? == 0 )); then
+            continue    # next file
+        else 
+            echo "$( eval_gettext "\${ERR}ERROR: something went wrong trying to delete the result file. Check access rights.\${RESET}" )" 1>&2
+            ((nb_file_failed+=1))       # non-fatal failure: could be due to the file itself, so we continue to the next file
+            continue   # next file
         fi
 
-        mv "${result_file}" "${input_file}"         # rename the shrinked file as the original file name
-        if (($? != 0 )); then
-            echo "$( eval_gettext "ERROR: something went wrong after shrinking. Unable to renamed the temporary result file name \"\${result_file}\" as the original file name." )" >&2
-        fi
-
-        echo "$( eval_gettext "ok: now \${filesize_result_file_kB} kB ( ${shrink_pc} % shrinked )." )"
-        echo "$( eval_gettext "The original unshrinked file is now renamed \"\${bak_file_filename}\" ." )"
-    else
-
-        # shrinking failed: the shrink percentage is less than 1%
-        rm "${result_file}" 1>/dev/null 2>&1
-        echo "$( gettext "This PDF file is already small." )"
     fi
+
+    # Successful shrinking: renaming steps
+
+    # rename the source file as a "bak" file (.ORIGINAL in English)
+    mv "${input_file}" "${bak_file}"
+    if (($? != 0 )); then
+        echo "$( eval_gettext "\${ERR}ERROR: something went wrong after shrinking. Unable to rename the original file as \"\${bak_file}\". Check access rights.\${RESET}" )" 1>&2
+        ((nb_file_failed+=1))       # non-fatal failure: could be due to the file itself, so we continue to the next file
+        continue
+    fi
+
+    # rename the result file as the original file name    
+    mv "${result_file}" "${input_file}"
+    if (($? != 0 )); then
+        echo "$( eval_gettext "\${ERR}ERROR: something went wrong after shrinking. Unable to rename the temporary result file name \"\${result_file}\" as the original file name. Check access rights.\${RESET}" )" 1>&2
+        ((nb_file_failed+=1))       # non-fatal failure: could be due to the file itself, so we continue to the next file
+        continue
+    fi
+
+    echo "$( eval_gettext "\${OK}\${shrink_percent} % shrinked.\${RESET}  (Original: \"\${bak_file_filename}\")" )"
     
 done
+    
+# End message
+echo
+if (( nb_file_failed > 0)); then
+    echo "$( eval_ngettext \
+    "\${ERR}ERROR: \${nb_file_failed} file with error during the shrinking process or the renaming after shrinking.\${RESET}" \
+    "\${ERR}ERROR: \${nb_file_failed} files with errors during the shrinking process or the renaming after shrinking.\${RESET}" \
+    "$nb_file_failed" )"
+else
+    echo "$(eval_gettext "\${OK}OKAY.\${RESET}")"
+fi
 
-if [ ${press_any_key} = true ]; then press_any_key "$( gettext "Press any key to exit..." )"; fi
-exit 0
+exit_script 0 "$(eval_gettext "\${HIGHLIGHT}Press any key to finish...\${RESET}")"
