@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# Installation of the shrink_pdf.sh command and the "Shrink PDF" Nemo action if Nemo is detected
+# Installation of the shrink_pdf command and the "Shrink PDF" Nemo action if Nemo is detected
 
-# For translations
+# For translations of this installation script
 . gettext.sh
 export TEXTDOMAIN="$(basename "$0" '.sh')"
 export TEXTDOMAINDIR="$(cd "$(dirname "$0")" && pwd)/locale"
@@ -41,7 +41,7 @@ function yes_or_no () {
 source_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # install location for the script
-script_filename="shrink_pdf.sh"
+script_filename="shrink_pdf"
 script_directory="/usr/bin"
 # install location for the translation files of the script
 locale_file_filename="shrink_pdf.mo"
