@@ -5,22 +5,25 @@ This tool reduces the size of PDF files, sometimes considerably, without any not
 This is useful because PDF files are often unnecessarily large, typically when they are scanned (although this depends on the scanning software and its settings).  
 Large PDF files can be problematic, for example when you cannot send them as email attachments or upload them to a website because they are too large.
 
+Today shrink_pdf exists in English and French languages.
 
-##Usage:
+Usage:  
+
 - Command line: **shrink_pdf  [ files ] ...**
-- ONLY if the file manager *Nemo* is present: use the "**shrink PDF"  context menu** entry of PDF files. ("right-click" on selected PDF files)
+- ONLY IF the file manager *Nemo* is present: use the **"Shrink PDF" context menu** for PDF files. ("right-click" on selected PDF files)
 
-If the PDF file size has actually been reduced, it will replace the original. The original file is renamed "... .ORIGINAL.pdf".  
-If the PDF file could not be reduced in size, it means it is already optimized. This tool will detect this and display a message, leaving the original PDF file unchanged.
+If the PDF file size has actually been reduced, it will replace the original. The original file is renamed "... .ORIGINAL.pdf" (for English or French language).  
+If the PDF file could not be reduced by at least 1%, it means that it is already as small as possible. This tool will detect this and display a message, leaving the original PDF file unchanged.
 
 ## Requirements
-- **gs** command (Ghostscript)
-- **bc** command (Basic Calulator: present in most Linux distributions)
-- **Bash**
-- **Nemo** file manager, to use the context menu entry in the file manager.
+- **gs** command, from Ghostscript: present in most Linux distributions.
+- **bc** command, from Basic Calulator: present in most Linux distributions.
+- **Bash** : present in most Linux distributions
+- Optional but recommended: **Nemo** file manager, to use the context menu entry ("right-click" menu) in the file manager.  
+        It is the default file manager for some Linux distributions like Linux Mint, but can be installed on others like Ubuntu.
 
 ## Installation:
-- Clone the GitHub repository or download the package from the GitHub project.
+- Clone the GitHub repository or download the package from the GitHub project last release.
 - Run `./install.sh` .
 
 You can then delete the directory where you cloned or downloaded the GitHub repository.
