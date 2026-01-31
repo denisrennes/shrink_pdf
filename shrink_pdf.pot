@@ -17,83 +17,83 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: shrink_pdf.sh:68
+#: shrink_pdf:68
 msgid "Press any key..."
 msgstr ""
 
-#: shrink_pdf.sh:89
+#: shrink_pdf:89
 msgid ".TEMP_SHRINKED"
 msgstr ""
 
-#: shrink_pdf.sh:90
+#: shrink_pdf:90
 msgid ".ORIGINAL"
 msgstr ""
 
-#: shrink_pdf.sh:108
+#: shrink_pdf:108
 #, sh-format
 msgid ""
 "The file \"${input_file}\" is skipped because it is probably the shrinked "
 "result of \"${bak_file_filename}\""
 msgstr ""
 
-#: shrink_pdf.sh:116
+#: shrink_pdf:116
 #, sh-format
 msgid ""
 "The file \"${input_file}\" is skipped because it has been already shrinked "
 "before. To shrink it again, rename it to its original name."
 msgstr ""
 
-#: shrink_pdf.sh:123
+#: shrink_pdf:123
 #, sh-format
 msgid ""
 "Shrink the PDF file \"${input_file}\", ${filesize_input_file_kB} kB ... "
 msgstr ""
 
-#: shrink_pdf.sh:129
+#: shrink_pdf:129
 #, sh-format
 msgid "ERROR: unable to delete \"${result_file}\" before starting shrinking."
 msgstr ""
 
-#: shrink_pdf.sh:141
+#: shrink_pdf:141
 #, sh-format
 msgid ""
 "ERROR: The shrinking command returned an error (exit code ${exit_code} "
 "returned by 'gs', a command from Ghostscript)."
 msgstr ""
 
-#: shrink_pdf.sh:150
+#: shrink_pdf:150
 msgid "ERROR: something went wrong, the shrinking result file does not exist."
 msgstr ""
 
-#: shrink_pdf.sh:165
+#: shrink_pdf:165
 #, sh-format
 msgid ""
 "ERROR: something went wrong. Error trying to rename the original file as "
 "\"${bak_file}\"."
 msgstr ""
 
-#: shrink_pdf.sh:170
+#: shrink_pdf:170
 msgid ""
 "ERROR: something went wrong. Error trying to move the renamed original file "
 "to the Trash."
 msgstr ""
 
-#: shrink_pdf.sh:178
+#: shrink_pdf:178
 #, sh-format
 msgid "ok: now ${filesize_result_file_kB} kB."
 msgstr ""
 
-#: shrink_pdf.sh:179
+#: shrink_pdf:179
 #, sh-format
 msgid ""
 "The original unshrinked file is now in the Trash, renamed "
 "\"${bak_file_filename}\" ."
 msgstr ""
 
-#: shrink_pdf.sh:184
+#: shrink_pdf:184
 msgid "This PDF file is already small."
 msgstr ""
 
-#: shrink_pdf.sh:189
+#: shrink_pdf:189
 msgid "Press any key to exit..."
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-17 14:43+0100\n"
+"POT-Creation-Date: 2026-01-31 16:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,62 +34,72 @@ msgid "N"
 msgstr ""
 
 #: install.sh:52
-msgid "PDF shrink"
+msgid "Shrink PDF"
 msgstr ""
 
-#: install.sh:63
+#: install.sh:56
+msgid "ERROR: The \"gs\" command is required but not installed. (Ghostscript)"
+msgstr ""
+
+#: install.sh:62
+msgid ""
+"ERROR: The \"bc\" command is required but not installed. (Basic Calulator)"
+msgstr ""
+
+#: install.sh:75
 #, sh-format
 msgid "This will install a shell command \"${script_filename}\"."
 msgstr ""
 
-#: install.sh:65
+#: install.sh:77
 #, sh-format
 msgid ""
 "This will also install a new \"${nemo_action_menu}\" context menu entry "
 "(\"right-click\") in Nemo, the file manager, for PDF files."
 msgstr ""
 
-#: install.sh:67
+#: install.sh:79
 #, sh-format
 msgid ""
 "As the file manager Nemo has NOT been detected, this will NOT install a new "
-"\"${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo."
+"\"${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, for "
+"PDF files."
 msgstr ""
 
-#: install.sh:69
+#: install.sh:81
 msgid "Continue?"
 msgstr ""
 
-#: install.sh:70
+#: install.sh:82
 msgid "Canceled, ok."
 msgstr ""
 
-#: install.sh:77
+#: install.sh:89
 msgid "We need elevated privileges to install: "
 msgstr ""
 
-#: install.sh:80
+#: install.sh:92
 msgid "Installation canceled: Failed to get elevated privileges (sudo)."
 msgstr ""
 
-#: install.sh:83
+#: install.sh:95
 msgid "ok for elevated privileges (sudo)."
 msgstr ""
 
-#: install.sh:92 install.sh:103 install.sh:114
+#: install.sh:104 install.sh:115 install.sh:126
 #, sh-format
 msgid "Installation of \"${file_name}\" to \"${dest_directory}\" ... "
 msgstr ""
 
-#: install.sh:95 install.sh:106 install.sh:117
+#: install.sh:107 install.sh:118 install.sh:129
 msgid "ok."
 msgstr ""
 
-#: install.sh:122
+#: install.sh:134
 msgid "The installation succeeded."
 msgstr ""
 
-#: install.sh:124
+#: install.sh:136
 #, sh-format
 msgid ""
 "You may have to close and relaunch the file manager Nemo to use the new "

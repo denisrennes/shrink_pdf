@@ -191,7 +191,7 @@ do
     input_file_filename="$(file_name "${input_file}")"
     bak_file_filename="$(file_name "${bak_file}")"
 
-    echo -n "$( eval_gettext ">>> \${HIGHLIGHT}\${input_file_filename}\${RESET} <<< " )"
+    echo -n ">>> ${HIGHLIGHT}${input_file_filename}${RESET} <<< "
 
     # Skip the file if its corresponding original file (renamed as a "bak" file) exists in the same directory
     if [[ -f "${bak_file}" ]]; then

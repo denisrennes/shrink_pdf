@@ -1,15 +1,15 @@
-# French translations for PACKAGE package.
-# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# Denis <denis@bigwhite>, 2026.
+# French translations for install.sh of the shrink_pdf package.
+# Copyright (C) 2026 Denis <denisreindeer@gmail.com>
+# This file is distributed under the same license as the shrink_pdf package.
+# Denis <denisreindeer@gmail.com>, 2026.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-17 14:25+0100\n"
+"POT-Creation-Date: 2026-01-31 16:26+0100\n"
 "PO-Revision-Date: 2026-01-16 16:42+0100\n"
-"Last-Translator: Denis <denis@bigwhite>\n"
+"Last-Translator: Denis <denisreindeer@gmail.com>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -34,67 +34,80 @@ msgid "N"
 msgstr "N"
 
 #: install.sh:52
-msgid "PDF shrink"
-msgstr "PDF réduction"
+msgid "Shrink PDF"
+msgstr "Réduire PDF"
 
-#: install.sh:63
+#: install.sh:56
+msgid "ERROR: The \"gs\" command is required but not installed. (Ghostscript)"
+msgstr "ERREUR: La commande \"gs\" est requise mais n'est pas installée. (Ghostscript)"
+
+#: install.sh:62
+msgid ""
+"ERROR: The \"bc\" command is required but not installed. (Basic Calulator)"
+msgstr ""
+msgstr "ERREUR: La commande \"bc\" est requise mais n'est pas installée. (Basic Calulator)"
+
+#: install.sh:75
 #, sh-format
 msgid "This will install a shell command \"${script_filename}\"."
 msgstr "Cela va installer la commande shell \"${script_filename}\"."
 
-#: install.sh:65
+#: install.sh:77
 #, sh-format
 msgid ""
 "This will also install a new \"${nemo_action_menu}\" context menu entry "
 "(\"right-click\") in Nemo, the file manager, for PDF files."
 msgstr ""
 "Cela va installer un nouveau choix \"${nemo_action_menu}\" dans le menu "
-"contextuel (\"clic-droit\") de Nemo le gestionnaire de fichiers, pour les fichiers PDF."
+"contextuel (\"clic-droit\") de Nemo le gestionnaire de fichiers, pour les "
+"fichiers PDF."
 
-#: install.sh:67
+#: install.sh:79
 #, sh-format
 msgid ""
 "As the file manager Nemo has NOT been detected, this will NOT install a new "
-"\"${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, for PDF files."
+"\"${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, for "
+"PDF files."
 msgstr ""
-"Comme le gestionnaire de fichiers Nemo n'a pas été détecté, il n'y aura PAS d'installation "
-" du nouveau choix \"${nemo_action_menu}\" dans le menu contextuel (\"clic-droit\") de Nemo, "
-"pour les fichiers PDF."
+"Comme le gestionnaire de fichiers Nemo n'a pas été détecté, il n'y aura PAS "
+"d'installation  du nouveau choix \"${nemo_action_menu}\" dans le menu "
+"contextuel (\"clic-droit\") de Nemo, pour les fichiers PDF."
 
-#: install.sh:69
+#: install.sh:81
 msgid "Continue?"
 msgstr "Continuer ?"
 
-#: install.sh:70
+#: install.sh:82
 msgid "Canceled, ok."
 msgstr "Annulé, ok.'"
 
-#: install.sh:77
+#: install.sh:89
 msgid "We need elevated privileges to install: "
 msgstr "Nous avons besoins de privilèges élevés pour installer : "
 
-#: install.sh:80
+#: install.sh:92
 msgid "Installation canceled: Failed to get elevated privileges (sudo)."
-msgstr "Installation annulée : échec pour l'obtention des privilèges élevés (sudo)."
+msgstr ""
+"Installation annulée : échec pour l'obtention des privilèges élevés (sudo)."
 
-#: install.sh:83
+#: install.sh:95
 msgid "ok for elevated privileges (sudo)."
 msgstr "ok pour les privilèges élevés (sudo)."
 
-#: install.sh:92 install.sh:103 install.sh:114
+#: install.sh:104 install.sh:115 install.sh:126
 #, sh-format
 msgid "Installation of \"${file_name}\" to \"${dest_directory}\" ... "
 msgstr "Installation de \"${file_name}\" vers \"${dest_directory}\" ... "
 
-#: install.sh:95 install.sh:106 install.sh:117
+#: install.sh:107 install.sh:118 install.sh:129
 msgid "ok."
 msgstr "ok."
 
-#: install.sh:122
+#: install.sh:134
 msgid "The installation succeeded."
 msgstr "L'installation a réussi."
 
-#: install.sh:124
+#: install.sh:136
 #, sh-format
 msgid ""
 "You may have to close and relaunch the file manager Nemo to use the new "
@@ -103,4 +116,5 @@ msgstr ""
 "Vous aurez peut-être à fermer et relancer le gestionnaire de fichiers Nemo "
 "pour utiliser le nouveau choix \"${nemo_action_menu}\" du menu contextuel "
 "des fichiers PDF."
+
 

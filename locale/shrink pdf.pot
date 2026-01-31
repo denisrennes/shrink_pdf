@@ -1,0 +1,148 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-31 10:20+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:41
+#, sh-format
+msgid "${HIGHLIGHT}Press any key...${RESET}"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:53
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:304
+#, sh-format
+msgid "${HIGHLIGHT}Press any key to finish...${RESET}"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:145
+#, sh-format
+msgid ""
+"${ERR}ERROR: The \"gs\" command is required but not installed. "
+"(Ghostscript)${RESET}"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:151
+#, sh-format
+msgid ""
+"${ERR}ERROR: The \"bc\" command is required but not installed. (Basic "
+"Calulator)${RESET}"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:165
+#, sh-format
+msgid "${ERR}ERROR: Incorrect command line argument \"${arg}\".${RESET}"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:175
+msgid ".TEMP_SHRINKED"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:176
+msgid ".ORIGINAL"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:194
+#, sh-format
+msgid ">>> ${HIGHLIGHT}${input_file_filename}${RESET} <<< "
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:198
+#, sh-format
+msgid ""
+"${WARN}SKIPPED${RESET} because it is probably the shrinking result of "
+"\"${bak_file_filename}\""
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:206
+#, sh-format
+msgid ""
+"${WARN}SKIPPED${RESET} because it has been already shrinked before. To "
+"shrink it again, rename it: remove \"${ORIGINAL_SUBEXT}\"."
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:217
+#, sh-format
+msgid ""
+"${ERR}ERROR: unable to delete \"${result_file}\" before starting shrinking. "
+"Check access rights.${RESET}"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:229
+#, sh-format
+msgid ""
+"${ERR}ERROR: The shrinking command failed and returned an error. Most likely "
+"this is not a valid PDF file.${RESET}"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:234
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:264
+#, sh-format
+msgid ""
+"${ERR}ERROR: something went wrong trying to delete the result file. Check "
+"access rights.${RESET}"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:242
+#, sh-format
+msgid "${ERR}ERROR: something went wrong, no shrinking result file.${RESET}"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:257
+#, sh-format
+msgid ""
+"${WARN}NOT shrinked:${RESET} most likely this file is already as small as "
+"possible."
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:276
+#, sh-format
+msgid ""
+"${ERR}ERROR: something went wrong after shrinking. Unable to rename the "
+"original file as \"${bak_file}\". Check access rights.${RESET}"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:284
+#, sh-format
+msgid ""
+"${ERR}ERROR: something went wrong after shrinking. Unable to rename the "
+"temporary result file name \"${result_file}\" as the original file name. "
+"Check access rights.${RESET}"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:289
+#, sh-format
+msgid ""
+"${OK}${shrink_percent} % shrinked.${RESET}  (Original: "
+"\"${bak_file_filename}\")"
+msgstr ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:297
+#, sh-format
+msgid ""
+"${ERR}ERROR: ${nb_file_failed} file with error during the shrinking process "
+"or the renaming after shrinking.${RESET}"
+msgid_plural ""
+"${ERR}ERROR: ${nb_file_failed} files with errors during the shrinking "
+"process or the renaming after shrinking.${RESET}"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /home/denis/Documents/DEV/shrink_pdf/shrink pdf:301
+#, sh-format
+msgid "${OK}OKAY.${RESET}"
+msgstr ""

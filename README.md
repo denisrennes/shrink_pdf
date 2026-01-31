@@ -28,7 +28,7 @@ You can then delete the directory where you cloned or downloaded the GitHub repo
 ## Uninstallation:
 Delete these files:
 
-- `'/usr/bin/shrink_pdf.sh'`
+- `'/usr/bin/shrink_pdf'`
 - `'/usr/share/nemo/actions/shrink_pdf.nemo_action'`
 - `'/usr/share/locale/fr/shrink_pdf.mo'`
 

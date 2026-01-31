@@ -11,24 +11,78 @@
 # 4) Convert the .po text file to generate a .mo translation binary file for the $2 language, in the sub-directory ''./locale/<lang>/LC_MESSAGES', relative to the script path.
 #    Only the .mo binary files are used by gettext tools at runtime.
 
+
+##### SCRIPT INITIALIZATION : FUNCTIONS, VARIABLES, etc. #####
+
+# File base name, with the extension, if any
+# $1 is the file path
+# Result is returned via stdout
+function file_name () {
+    echo "${1##*/}"
+}
+
+# File Extension, if any. Example: '.pdf' 
+# $1 is the file path
+# Result is returned via stdout
+# A '.' as first character of the file name is discarded for the search of the file extension. Ex: '.conf': no extension, '.conf.json':'.json' extension 
+# When no extension, '' is returned
+function file_extension () {
+    local filename
+
+    # Extract filename from path
+    filename="$(file_name "${1}")"
+
+    # If filename starts with a dot, remove it: it does not mean an extension
+    if [[ "$filename" == .* ]]; then
+        filename="${filename##.}"
+    fi
+
+    # If filename contains a dot, extract the extension
+    if [[ "$filename" == *.* ]]; then
+        echo ".${filename##*.}"
+    else
+        echo ''
+    fi
+}
+
+# Return the file name-only, i.e. the file name without the extension. The '.' of the extension is removed too.
+# $1 is the file path
+# Result is returned via stdout
+function file_nameonly () {
+    local filename="$(file_name "${1}")"
+    local ext="$(file_extension "${filename}")"      # the file extension
+    # remove the n last characters of the file name, n is file extension length
+    if [[ -z ${ext} ]]; then 
+        echo "${filename}"
+    else
+        echo "${filename::-$((${#ext}))}"
+    fi
+}
+
+
+##### MAIN #####
+
 # $1 and $2 are mandatory
 if (( $# != 2 )); then
-  echo "ERROR: 2 arguments are mandatory: The bash script path and the short language (ex:"fr")"
+  echo "ERROR: 2 arguments are mandatory: \$1 <=> The bash script path, \$2 <=> the short language code (ex:"fr")"
   exit 255
 fi
 
-# check arg 1: must be an existing bash script path with a '.sh' extension
+# check arg 1: must be an existing bash script path
 script_path="${1}"
 if [[ ! -f "${script_path}" ]]; then
-  echo "ERROR: argument 1 must be an existing bash script path, with \".sh\" extension."
+  echo "ERROR: argument 1 is not an existing file path."
   exit 255
 fi
-script_name="$(basename "${script_path}")"
-script_nameonly="$(basename "${script_path}" ".sh")"
-if [[ "${script_nameonly}" == "${script_name}" ]]; then
-  echo "ERROR: argument 1 must be a bash script path, with a \".sh\" extension."
+mime_type="$(file --mime-type -b "${script_path}")"
+if [[ ! "${mime_type}" == *"x-shellscript" ]]; then
+  echo "ERROR: argument 1 must be a bash script path."
   exit 255
 fi
+
+script_name="$(file_name "${script_path}")"
+script_nameonly="$(file_nameonly "${script_path}")"
+
 
 # check arg 2: must be a language code, like 'fr', 'fr_FR', etc.
 lang="${2}"
@@ -39,8 +93,8 @@ if [ $? -ne 0 ]; then
 fi
   
 # Future TEXTDOMAIN and TEXDOMAINDIR for gettext in this language
-textdomain="$(basename "$1" '.sh')"
-textdomaindir="$(cd "$(dirname "$1")" && pwd)/locale"
+textdomain="${script_nameonly}"
+textdomaindir="$(cd "$(dirname "${script_path}")" && pwd)/locale"
 
 echo
 
@@ -121,5 +175,4 @@ msgfmt "${source_file}" -o "${result_file}"
 if [[ $? == 0 ]]; then echo 'ok'; else echo 'ERROR!'; exit 20; fi 
 
 echo
-echo "To test this language translation, just launch this command line: 'LANGUAGE=${lang} ./${textdomain}.sh' [... arguments]"
-
+echo "To test this language translation, just launch this command line: 'LANGUAGE=${lang} ./${script_name}' [... arguments]"
