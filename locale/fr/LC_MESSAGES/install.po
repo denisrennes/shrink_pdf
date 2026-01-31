@@ -44,7 +44,6 @@ msgstr "ERREUR: La commande \"gs\" est requise mais n'est pas installée. (Ghost
 #: install.sh:62
 msgid ""
 "ERROR: The \"bc\" command is required but not installed. (Basic Calulator)"
-msgstr ""
 msgstr "ERREUR: La commande \"bc\" est requise mais n'est pas installée. (Basic Calulator)"
 
 #: install.sh:75
