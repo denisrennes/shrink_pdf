@@ -1,44 +1,52 @@
 # shrink_pdf
 
-This tool reduces the size of PDF files, sometimes considerably, without any noticeable loss of quality, at least for common documents, and without using a website (which can sometimes be dubious...).  
+**shrink_pdf** reduces the size of some unnecessarily large PDF files, without any noticeable loss of quality, and without using a website.  
 
-This is useful because PDF files are often unnecessarily large, typically when they are scanned (although this depends on the scanning software and its settings).  
-Large PDF files can be problematic, for example when you cannot send them as email attachments or upload them to a website because they are too large.
+You can use either:  
 
-Today shrink_pdf exists in English and French languages.
-
-Usage:  
-
-- Command line: **shrink_pdf  [ files ] ...**
-- ONLY IF the file manager *Nemo* is present: use the **"Shrink PDF" context menu** for PDF files. ("right-click" on selected PDF files)
+* The **"Shrink PDF" context menu** for PDF files in the file manager **Nemo**: "right-click" on selected PDF files.
+* The command line: **shrink_pdf  [ files ] ...**  
 
 If the PDF file size has actually been reduced, it will replace the original. The original file is renamed "... .ORIGINAL.pdf" (for English or French language).  
-If the PDF file could not be reduced by at least 1%, it means that it is already as small as possible. This tool will detect this and display a message, leaving the original PDF file unchanged.
+If the PDF file could not be reduced by at least 1%, it means that it is already as small as possible: shrink_pdf will display a message and leave the file unchanged.
 
-## Requirements
+Today shrink_pdf exists in English and French languages but it is easy to translate in another language, using the gen_po.sh script provided in the package.
+
+
+### Why?
+Some PDF files are so large, that you you cannot send them as email attachments or upload them to a website.  
+
+This happens typically with some scanned documents, although this depends on the scanning software: 
+
+- Xsane often produces unnecessarily large PDF files.
+- Simple Scan, the default GNOME document scanner, does not produce large PDF files but sometimes the result is not good, so some users install Xsane.
+
+
+### Requirements
 - **gs** command, from Ghostscript: present in most Linux distributions.
 - **bc** command, from Basic Calulator: present in most Linux distributions.
 - **Bash** : present in most Linux distributions
 - Optional but recommended: **Nemo** file manager, to use the context menu entry ("right-click" menu) in the file manager.  
         It is the default file manager for some Linux distributions like Linux Mint, but can be installed on others like Ubuntu.
 
-## Installation:
+### Installation:
 - Clone the GitHub repository or download the package from the GitHub project last release.
 - Run `./install.sh` .
 
 You can then delete the directory where you cloned or downloaded the GitHub repository.
 
-## Uninstallation:
+### Uninstallation:
 Delete these files:
 
 - `'/usr/bin/shrink_pdf'`
 - `'/usr/share/nemo/actions/shrink_pdf.nemo_action'`
 - `'/usr/share/locale/fr/shrink_pdf.mo'`
 
-## Under the hood
+### Under the hood
 **shrink_pdf** is using a Ghostscript command.  See https://www.digitalocean.com/community/tutorials/reduce-pdf-file-size-in-linux
 
-####To do
-- Create man pages (doc for the command)
-- make it work in *Nautilus*, the default file manager in Ubuntu.
+###Coming "soon"...
+- **gen\_po.sh** improvement for translation in other languages by the user.
+- man pages (doc for the command)
+- context menu (right-click) in *Nautilus*, the default file manager in Ubuntu.
 - create a .deb package
