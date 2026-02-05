@@ -18,6 +18,10 @@ export TEXTDOMAINDIR
 
 ##### FUNCTIONS and basic initialization #####
 
+# Command and version for --help
+this_name="$(basename "$0")"
+this_version="1.1.2"
+
 # it will be a "press any key" prompt before any exit, until the script arguments are parsed for the --press_any_key option
 press_any_key=true
 
@@ -57,11 +61,24 @@ function exit_script () {
     if [ ${press_any_key} = true ]; then press_any_key "${exit_message}"; fi
 
     if [[ -z ${1} ]]; then
-        exit 255
+        exit 2
     else
         exit ${1}
     fi
 }
+
+# --version
+function version_display () {
+    echo "${this_version}"
+}
+
+# --help
+function help_display () {
+    echo "${this_name} version ${this_version}"
+}
+
+
+
 
 # number of files having failed to be shrinked by 'gs' (could be due to this file, so non-fatal failure, process continued to the next file)
 nb_file_failed=0
@@ -143,13 +160,13 @@ function shrink_percent () {
 # Error exit if "gs" is not installed (Ghostscript command)
 command -v gs  1>/dev/null 2>&1 || {
     echo "$(eval_gettext "\${ERR}ERROR: The \"gs\" command is required but not installed. (Ghostscript)\${RESET}" )" 1>&2
-    exit_script 1
+    exit_script 2
 }
 
 # Error exit if "bc" is not installed (Basic Calculator)
 command -v bc  1>/dev/null 2>&1 || {
     echo "$(eval_gettext "\${ERR}ERROR: The \"bc\" command is required but not installed. (Basic Calulator)\${RESET}" )" 1>&2
-    exit_script 1
+    exit_script 2
 }
 
 
@@ -161,9 +178,17 @@ for arg in "$@"; do
         --press_any_key)
             press_any_key=true
             ;;
+        --help)
+            help_display
+            exit_script 0
+            ;;
+        --version)
+            version_display
+            exit_script 0
+            ;;
         --* | -*)
             echo "$(eval_gettext "\${ERR}ERROR: Incorrect command line argument \"\${arg}\".\${RESET}" )" 1>&2
-            exit_script 1
+            exit_script 2
             ;;
         *)
             files+=("$arg")
@@ -215,7 +240,7 @@ do
         rm "${result_file}"
         if (($? != 0 )); then
             echo "$( eval_gettext "\${ERR}ERROR: unable to delete \"\${result_file}\" before starting shrinking. Check access rights.\${RESET}" )" 1>&2
-            exit_script 1
+            exit_script 2
         fi
     fi
 
@@ -240,7 +265,7 @@ do
     # if the result temporay file does not exist, display an error, then continue with the next file
     if [[ ! -f "${result_file}" ]]; then
         echo "$( eval_gettext "\${ERR}ERROR: something went wrong, no shrinking result file.\${RESET}" )"
-        exit_script 1
+        exit_script 2
     fi
 
     # Verify that the result file is at least 1% smaller than the original: 
