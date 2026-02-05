@@ -10,7 +10,7 @@ You can use either:
 If the PDF file size has actually been reduced, it will replace the original. The original file is renamed "... .ORIGINAL.pdf" (for English or French language).  
 If the PDF file could not be reduced by at least 1%, it means that it is already as small as possible: shrink_pdf will display a message and leave the file unchanged.
 
-Today shrink_pdf exists in English and French languages but it is easy to translate in another language, using the gen_po.sh script provided in the package.
+Today shrink_pdf exists in English and French languages but it is easy to translate in another language, using the gen_mo.sh script provided in the package.
 
 
 ### Why?
@@ -48,7 +48,7 @@ Delete these files:
 
 
 Coming "soon"...
-- **gen\_po.sh** improvement for translation in other languages by the user.
+- **gen_mo.sh** improvement for translation in other languages by the user.
 - man pages (doc for the command)
 - context menu (right-click) in *Nautilus*, the default file manager in Ubuntu.
 - create a .deb package
