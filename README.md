@@ -45,7 +45,9 @@ Delete these files:
 ### Under the hood
 **shrink_pdf** is using a Ghostscript command.  See https://www.digitalocean.com/community/tutorials/reduce-pdf-file-size-in-linux
 
-###Coming "soon"...
+
+
+Coming "soon"...
 - **gen\_po.sh** improvement for translation in other languages by the user.
 - man pages (doc for the command)
 - context menu (right-click) in *Nautilus*, the default file manager in Ubuntu.
