@@ -74,28 +74,34 @@ function show_version () {
 function show_help () {
     help_text=$(cat << EOM
 
-Usage: \${this_script_name} [OPTION]... PDF_FILE...
-
 Shrink PDF files when possible.
 
-OPTION
--k  --press_any_key   The user must press a key on the keyboard at the end.
-                      This allows them to read the result before the window
-                      closes automatically, for example when the programme
-                      is launched from the file manager.
--x  --extreme_shrink  Try shrinking even more, when possible. This may 
-                      result in a loss of quality.
--v  --version         Output version information and exit.
--h, --help            Display this help and exit.
-    --                End of options. Allows file names like '-h','-v'...
+Usage:    \${this_script_name} [OPTION]... PDF_FILE...
 
-PDF_FILE
+Options:
+  -k  --press_any_key   Wait for any key to be pressed at the end.
+                        This allows them to read the result before the window
+                        closes automatically, for example when the program is
+                        launched from the file manager.
+  -x  --extreme_shrink  Try shrinking even more, when possible. This may 
+                        result in a loss of quality.
+
+      --version         Output version information and exit.
+      --help            Display this help and exit.
+
+PDF_FILE:
     One or more PDF files to shrink.
 
 Exit status:
- 0  Ok. (Some files may not be shrinked because already small.)
- 2  Error.
- 255 Program error (bug): wrong number of arguments for a function call, etc.
+    0  Ok. (Some files may not be shrinked because already small.)
+    2  Error.
+  255  Program error (bug): wrong number of arguments for a function call, etc.
+
+Examples:
+  \${this_script_name} ./big_doc.pdf
+
+  \${this_script_name} -x ./big_doc.pdf
+
 EOM
 )
 
@@ -111,19 +117,24 @@ parse_args() {
     PRESS_ANY_KEY=false
     EXTREME_SHRINK=false
 
+    if [ $# -eq 0 ]; then
+        show_help
+        exit_script 0
+    fi
+
     local parse_options=true arg
 
-    while [[ $# > 0 ]]; do
+    while [ $# -gt 0 ]; do
         arg="$1"
         shift
 
         if [ "$parse_options" = true ]; then
             case "$arg" in
-            -h|--help)
+            --help)
                 show_help
                 exit_script 0
                 ;;
-            -v|--version)
+            --version)
                 show_version
                 exit_script 0
                 ;;
@@ -145,10 +156,10 @@ parse_args() {
 #             shift
 #             continue
 #             ;;
-            --)
-                parse_options=false
-                continue
-                ;;
+#            --)
+#                parse_options=false
+#                continue
+#                ;;
             -*)
                 echo "$(eval_gettext "\${ERR}ERROR: unknown option argument \"\${arg}\".\${RESET}" )" 1>&2
                 exit_script 2
@@ -159,14 +170,14 @@ parse_args() {
         if [ -f "$arg" ]; then
             FILES+=("$arg")
         else
-            echo "$(eval_gettext "\${ERR}'ERROR: cannot access \"\${arg}\". No such file.\${RESET}" )" 1>&2
+            echo "$(eval_gettext "\${ERR}ERROR: cannot access \"\${arg}\". No such file.\${RESET}" )" 1>&2
             exit_script 2
         fi
 
     done
 
     if [ ${#FILES[@]} -eq 0 ]; then
-        echo "$(eval_gettext "\${ERR}'ERROR: at least one FILE argument is required.\${RESET}" )" 1>&2
+        echo "$(eval_gettext "\${ERR}ERROR: at least one FILE argument is required.\${RESET}" )" 1>&2
         exit_script 2
     fi
 }
@@ -306,7 +317,7 @@ do
     fi
 
     filesize_input_file=$(stat -c%s "${input_file}")                        # size of the original file
-    filesize_input_file_kB="$(divide_by_1000 ${filesize_input_file} 1)"     # size of the original file in kB
+    filesize_input_file_kB="$(divide_by_1000 "${filesize_input_file}" 1)"   # size of the original file in kB
     
     # if the result file already exists (with its temporary name), then delete it. It could be the result of a previous shrinking attempt, interrupted before the renaming step.
     if [ -f "${result_file}" ]; then
@@ -345,8 +356,8 @@ do
     # if so, rename the source file as a "bak" file and the result file will replace it, taking its name, 
     # else delete the result file: the source file was already small
     filesize_result_file=$(stat -c%s "${result_file}")                              # size of the result file
-    filesize_result_file_kB="$(divide_by_1000 ${filesize_result_file} 1)"           # size of the result file in kB
-    shrink_percent="$(shrink_percent ${filesize_input_file} ${filesize_result_file})"    # shrink percentage
+    filesize_result_file_kB="$(divide_by_1000 "${filesize_result_file}" 1)"           # size of the result file in kB
+    shrink_percent="$(shrink_percent "${filesize_input_file}" "${filesize_result_file}")"    # shrink percentage
 
 
     if (( $(echo "$shrink_percent < 1" | bc -l) )); then
@@ -374,7 +385,7 @@ do
     fi
 
     # rename the result file as the original file name    
-    if ! mv "${result_file}" "${input_file}" 1/dev/null; then
+    if ! mv "${result_file}" "${input_file}" 1>/dev/null; then
         echo "$( eval_gettext "\${ERR}ERROR: something went wrong after shrinking. Unable to rename the temporary result file name \"\${result_file}\" as the original file name. Check access rights.\${RESET}" )" 1>&2
         exit_script 2
     fi

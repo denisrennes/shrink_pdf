@@ -50,6 +50,12 @@ locale_directory="/usr/share/locale"
 nemo_action_filename="shrink_pdf.nemo_action"
 nemo_actions_directory="/usr/share/nemo/actions"
 nemo_action_menu="$(gettext "Shrink PDF")"
+# install location for the English man page file
+man_page_en_filename="shrink_pdf.nemo_action"
+man_page_en_directory="/usr/share/man/man1"
+# install location for the French man page file
+Man_page_fr_directory="/usr/share/man/fr/man1"
+
 
 # Error exit if "gs" is not installed (Ghostscript command)
 command -v gs >/dev/null 2>&1 || {
@@ -104,6 +110,16 @@ dest_file_path="${dest_directory}/${script_filename}"
 echo -n "$( eval_gettext "Installation of \"\${file_name}\" to \"\${dest_directory}\" ... " )"
 sudo cp "${source_file_path}" "${dest_file_path}"
 sudo chmod u=rwx,g=rx,o=rx "${dest_file_path}"
+echo "$(gettext "ok.")"
+
+# Install the English man page for all users of the system
+file_name="${script_filename}.1.gz"
+source_file_path="${source_dir}/${file_name}"
+dest_directory="${man_page_en_directory}"
+dest_file_path="${dest_directory}/${file_name}"
+echo -n "$( eval_gettext "Installation of \"\${file_name}\" to \"\${dest_directory}\" ... " )"
+sudo cp "${source_file_path}" "${dest_file_path}"
+sudo chmod u=rw,g=r,o=r "${dest_file_path}"
 echo "$(gettext "ok.")"
 
 # Install the 'fr' translation files of the script for all users of the system, in /usr/share/locale

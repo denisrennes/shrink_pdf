@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-31 10:27+0100\n"
+"POT-Creation-Date: 2026-02-10 20:14+0100\n"
 "PO-Revision-Date: 2026-01-15 16:00+0100\n"
 "Last-Translator: Denis <denisreindeer@gmail.com>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -17,18 +17,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:41
+#: shrink_pdf:45
 #, sh-format
 msgid "${HIGHLIGHT}Press any key...${RESET}"
 msgstr "${HIGHLIGHT}Appuyez sur une touche...${RESET}"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:53
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:304
+#: shrink_pdf:57 shrink_pdf:401
 #, sh-format
 msgid "${HIGHLIGHT}Press any key to finish...${RESET}"
 msgstr "${HIGHLIGHT}Appuyez sur une touche pour terminer...${RESET}"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:145
+#: shrink_pdf:164
+#, sh-format
+msgid "${ERR}ERROR: unknown option argument \"${arg}\".${RESET}"
+msgstr "${ERR}ERREUR: argument option incorrect \"${arg}\".${RESET}"
+
+#: shrink_pdf:173
+#, sh-format
+msgid "${ERR}ERROR: cannot access \"${arg}\". No such file.${RESET}"
+msgstr "${ERR}ERREUR: accès impossible à \"${arg}\". Ce fichier n'existe pas.${RESET}"
+
+#: shrink_pdf:180
+#, sh-format
+msgid "${ERR}ERROR: at least one FILE argument is required.${RESET}"
+msgstr "${ERR}ERREUR: au moins un argument FICHIER est requis.${RESET}"
+
+#: shrink_pdf:261
 #, sh-format
 msgid ""
 "${ERR}ERROR: The \"gs\" command is required but not installed. "
@@ -37,47 +51,46 @@ msgstr ""
 "${ERR}ERREUR: La commande \"gs\" est requise mais pas installée. "
 "(Ghostscript)${RESET}"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:151
+#: shrink_pdf:267
 #, sh-format
 msgid ""
 "${ERR}ERROR: The \"bc\" command is required but not installed. (Basic "
 "Calulator)${RESET}"
 msgstr ""
-"${ERR}ERREUR: La commande \"bc\" est requise mais pas installée. "
-"(Basic Calculator)${RESET}"
+"${ERR}ERREUR: La commande \"bc\" est requise mais pas installée. (Basic "
+"Calculator)${RESET}"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:165
-#, sh-format
-msgid "${ERR}ERROR: Incorrect command line argument \"${arg}\".${RESET}"
-msgstr "${ERR}ERREUR: argument incorrect \"${arg}\".${RESET}"
+#: shrink_pdf:280
+msgid "Shrink mode: Extreme"
+msgstr "Mode de réduction: Extrême"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:175
+#: shrink_pdf:284
 msgid ".TEMP_SHRINKED"
 msgstr ".TEMP_REDUIT"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:176
+#: shrink_pdf:285
 msgid ".ORIGINAL"
 msgstr ".ORIGINAL"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:198
+#: shrink_pdf:307
 #, sh-format
 msgid ""
 "${WARN}SKIPPED${RESET} because it is probably the shrinking result of "
 "\"${bak_file_filename}\""
 msgstr ""
-"${WARN}IGNORÉ${RESET} parce que c'est probablement le résultat de la réduction de "
-"\"${bak_file_filename}\""
+"${WARN}IGNORÉ${RESET} parce que c'est probablement le résultat de la "
+"réduction de \"${bak_file_filename}\""
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:206
+#: shrink_pdf:315
 #, sh-format
 msgid ""
 "${WARN}SKIPPED${RESET} because it has been already shrinked before. To "
 "shrink it again, rename it: remove \"${ORIGINAL_SUBEXT}\"."
 msgstr ""
-"${WARN}IGNORÉ${RESET} parce qu'il a déjà été réduit avant. "
-"Pour le réduire une autre fois, renommez-le: enlevez \"${ORIGINAL_SUBEXT}\"."
+"${WARN}IGNORÉ${RESET} parce qu'il a déjà été réduit avant. Pour le réduire "
+"une autre fois, renommez-le: enlevez \"${ORIGINAL_SUBEXT}\"."
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:217
+#: shrink_pdf:325
 #, sh-format
 msgid ""
 "${ERR}ERROR: unable to delete \"${result_file}\" before starting shrinking. "
@@ -86,33 +99,32 @@ msgstr ""
 "${ERR}ERREUR: impossible d'effacer \"${result_file}\" avant de démarrer la "
 "réduction. Vérifiez les droits d'accès.${RESET}"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:229
+#: shrink_pdf:339
 #, sh-format
 msgid ""
 "${ERR}ERROR: The shrinking command failed and returned an error. Most likely "
 "this is not a valid PDF file.${RESET}"
 msgstr ""
-"${ERR}ERREUR: La commande de réduction a échoué et a retourné une erreur. "
-"Ce fichier n'est probablement pas un fichier PDF valide.${RESET}"
+"${ERR}ERREUR: La commande de réduction a échoué et a retourné une erreur. Ce "
+"fichier n'est probablement pas un fichier PDF valide.${RESET}"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:234
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:264
+#: shrink_pdf:343 shrink_pdf:372
 #, sh-format
 msgid ""
-"${ERR}ERROR: something went wrong trying to delete the result "
-"file. Check access rights.${RESET}"
+"${ERR}ERROR: something went wrong trying to delete the result file. Check "
+"access rights.${RESET}"
 msgstr ""
-"${ERR}ERREUR: quelque chose s'est mal passé en essayant d'effacer le "
-"fichier résultat. Vérifiez les droits d'accès.${RESET}"
+"${ERR}ERREUR: quelque chose s'est mal passé en essayant d'effacer le fichier "
+"résultat. Vérifiez les droits d'accès.${RESET}"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:242
+#: shrink_pdf:351
 #, sh-format
 msgid "${ERR}ERROR: something went wrong, no shrinking result file.${RESET}"
 msgstr ""
 "${ERR}ERREUR: quelque chose s'est mal passé, pas de fichier résultat de la "
 "réduction.${RESET}"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:257
+#: shrink_pdf:366
 #, sh-format
 msgid ""
 "${WARN}NOT shrinked:${RESET} most likely this file is already as small as "
@@ -121,27 +133,28 @@ msgstr ""
 "${WARN}NON réduit:${RESET} ce fichier est probablement aussi petit que "
 "possible."
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:276
+#: shrink_pdf:383
 #, sh-format
 msgid ""
 "${ERR}ERROR: something went wrong after shrinking. Unable to rename the "
 "original file as \"${bak_file}\". Check access rights.${RESET}"
 msgstr ""
-"${ERR}ERREUR: quelque chose s'est mal passé après la réduction. Impossible de "
-"renommer le fichier original en \"${bak_file}\". Vérifiez les droits d'accès.${RESET}"
+"${ERR}ERREUR: quelque chose s'est mal passé après la réduction. Impossible "
+"de renommer le fichier original en \"${bak_file}\". Vérifiez les droits "
+"d'accès.${RESET}"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:284
+#: shrink_pdf:389
 #, sh-format
 msgid ""
 "${ERR}ERROR: something went wrong after shrinking. Unable to rename the "
 "temporary result file name \"${result_file}\" as the original file name. "
 "Check access rights.${RESET}"
 msgstr ""
-"${ERR}ERREUR: quelque chose s'est mal passé après la réduction. Impossible de "
-"renommer le fichier résultat, de son nom temporaire \"${result_file}\" vers "
-"le nom du fichier original. Vérifiez les droits d'accès.${RESET}"
+"${ERR}ERREUR: quelque chose s'est mal passé après la réduction. Impossible "
+"de renommer le fichier résultat, de son nom temporaire \"${result_file}\" "
+"vers le nom du fichier original. Vérifiez les droits d'accès.${RESET}"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:289
+#: shrink_pdf:393
 #, sh-format
 msgid ""
 "${OK}${shrink_percent} % shrinked.${RESET}  (Original: "
@@ -150,22 +163,7 @@ msgstr ""
 "${OK}${shrink_percent} % réduit.${RESET}  (Original: "
 "\"${bak_file_filename}\")"
 
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:297
-#, sh-format
-msgid ""
-"${ERR}ERROR: ${nb_file_failed} file with error during the shrinking process "
-"or the renaming after shrinking.${RESET}"
-msgid_plural ""
-"${ERR}ERROR: ${nb_file_failed} files with errors during the shrinking "
-"process or the renaming after shrinking.${RESET}"
-msgstr[0] ""
-"${ERR}ERREUR: ${nb_file_failed} fichier ayant eu une erreur pendant la "
-"réduction ou le renommage après la réduction.${RESET}"
-msgstr[1] ""
-"${ERR}ERREUR: ${nb_file_failed} fichiers ayant eu une erreur pendant la "
-"réduction ou le renommage après la réduction.${RESET}"
-
-#: /home/denis/Documents/DEV/shrink_pdf/shrink_pdf:301
+#: shrink_pdf:399
 #, sh-format
 msgid "${OK}OKAY.${RESET}"
 msgstr "${OK}OK.${RESET}"
