@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail       # exit immediately in case of error
 
 # Try to shrink the size of PDF files, using a Ghostscript command. See: https://www.digitalocean.com/community/tutorials/reduce-pdf-file-size-in-linux
 # All arguments are PDF files to shrink. They can be passed by a file manager custom context menu actions, like Nemo actions.
@@ -10,7 +11,7 @@
 . gettext.sh
 export TEXTDOMAIN="$(basename "$0")"
 TEXTDOMAINDIR="$(cd "$(dirname "$0")" && pwd)/locale"
-if [ ! -d ${TEXTDOMAINDIR} ]; then
+if [ ! -d "${TEXTDOMAINDIR}" ]; then
     TEXTDOMAINDIR="/usr/share/locale"
 fi
 export TEXTDOMAINDIR
@@ -19,11 +20,8 @@ export TEXTDOMAINDIR
 ##### FUNCTIONS and basic initialization #####
 
 # Command and version for --help
-this_name="$(basename "$0")"
-this_version="1.1.2"
-
-# it will be a "press any key" prompt before any exit, until the script arguments are parsed for the --press_any_key option
-press_any_key=true
+this_script_name="$(basename "$0")"
+this_script_version="1.1.3"
 
 # Colors and highligh in outputs
 RED=$(tput setaf 1)
@@ -41,10 +39,10 @@ HIGHLIGHT="${BOLD}"
 # $1: Optional message to display. Default: "Press any key...'"
 function press_any_key () {
     echo
-    if [[ -z ${1} ]]; then
-        echo -n "$(eval_gettext "\${HIGHLIGHT}Press any key...\${RESET}")"
-    else
+    if [ $# -ge 1 ]; then
         echo -n "${1}"
+    else
+        echo -n "$(eval_gettext "\${HIGHLIGHT}Press any key...\${RESET}")"
     fi
     read -s -n 1
     echo
@@ -53,35 +51,120 @@ function press_any_key () {
 # Exit this script with an exit code, possibly after a "press any key"
 function exit_script () {
     local exit_message
-    if [[ -z ${2} ]]; then
-        exit_message="$(eval_gettext "\${HIGHLIGHT}Press any key to finish...\${RESET}")"
-    else
+    if [ $# -ge 2 ]; then
         exit_message="${2}"
-    fi
-    if [ ${press_any_key} = true ]; then press_any_key "${exit_message}"; fi
-
-    if [[ -z ${1} ]]; then
-        exit 2
     else
+        exit_message="$(eval_gettext "\${HIGHLIGHT}Press any key to finish...\${RESET}")"
+    fi
+    if [ "${PRESS_ANY_KEY}" = true ]; then press_any_key "${exit_message}"; fi
+
+    if [ $# -ge 1 ]; then
         exit ${1}
+    else
+        exit 2
     fi
 }
 
 # --version
-function version_display () {
-    echo "${this_version}"
+function show_version () {
+    echo "${this_script_version}"
 }
 
 # --help
-function help_display () {
-    echo "${this_name} version ${this_version}"
+function show_help () {
+    eval_gettext <<EOF
+Usage: ${this_script_name} [OPTION]... PDF_FILE...
+Shrink PDF files when possible.
+
+OPTION
+-k  --press_any_key        The user must press a key on the keyboard at the end.
+                           This allows them to read the result before the window
+                           closes automatically, for example when the programme
+                           is launched from the file manager.
+-x  --extreme_shrink       Try shrinking even more, when possible. This may 
+                           result in a loss of quality.
+-v  --version              Output version information and exit.
+-h, --help                 Display this help and exit.
+    --                     End of options. Allows file names like '-h','-v'...
+
+PDF_FILE
+    One or more PDF files to shrink.
+
+Exit status:
+ 0  Ok. (Some files may not be shrinked because already small.)
+ 2  Error.
+ 255 Program error: wrong number of arguments for a function call, etc.
+EOF
 }
 
+# Parse command line arguments. Also handles show_version and show_help
+# globals set by this function:
+#   FILES   → array of file arguments: they all exist (exit 2 if any does not exist)
+#   PRESS_ANY_KEY, EXTREME_SHRINK → booleans
+parse_args() {
+    FILES=()
+    PRESS_ANY_KEY=false
+    EXTREME_SHRINK=false
 
+    local parse_options=true arg
 
+    while [[ $# > 0 ]]; do
+        arg="$1"
+        shift
 
-# number of files having failed to be shrinked by 'gs' (could be due to this file, so non-fatal failure, process continued to the next file)
-nb_file_failed=0
+        if [ "$parse_options" = true ]; then
+            case "$arg" in
+            -h|--help)
+                show_help
+                exit_script 0
+                ;;
+            -v|--version)
+                show_version
+                exit_script 0
+                ;;
+            -k|--press_any_key)
+                PRESS_ANY_KEY=true
+                continue
+                ;;
+            -x|--extreme_shrink)
+                EXTREME_SHRINK=true
+                continue
+                ;;
+# template to manage options with values
+#             -o|--output)
+#             if [ $# -lt 1 ]; then
+#                 echo "$(eval_gettext "\${ERR}ERROR: Missing argument for \"\${arg}\".\${RESET}" )" 1>&2
+#                 exit_script 2
+#             fi
+#             OUTPUT="$1"
+#             shift
+#             continue
+#             ;;
+            --)
+                parse_options=false
+                continue
+                ;;
+            -*)
+                echo "$(eval_gettext "\${ERR}ERROR: unknown option argument \"\${arg}\".\${RESET}" )" 1>&2
+                exit_script 2
+                ;;
+            esac
+        fi
+
+        if [ -f "$arg" ]; then
+            FILES+=("$arg")
+        else
+            echo "$(eval_gettext "\${ERR}'ERROR: cannot access \"\${arg}\". No such file.\${RESET}" )" 1>&2
+            exit_script 2
+        fi
+
+    done
+
+    if [ ${#FILES[@]} -eq 0 ]; then
+        echo "$(eval_gettext "\${ERR}'ERROR: at least one FILE argument is required.\${RESET}" )" 1>&2
+        exit_script 2
+    fi
+}
 
 
 # File base name, with the extension, if any
@@ -111,7 +194,7 @@ function file_extension () {
     if [[ "$filename" == *.* ]]; then
         echo ".${filename##*.}"
     else
-        echo ''
+        echo ""
     fi
 }
 
@@ -122,7 +205,7 @@ function path_without_extension () {
     local file=${1}
     local ext="$(file_extension "${file}")"      # the file extension
     # remove the n last characters, n is file extension length
-    if [[ -z ${ext} ]]; then 
+    if [ "${ext}" = "" ]; then 
         echo "${file}"
     else
         echo "${file::-$((${#ext}))}"
@@ -134,7 +217,7 @@ function path_without_extension () {
 # $2 is the required number of digits after the decimal point
 # Return the result to the Standard Output
 function divide_by_1000 () {
-    if (( $# != 2 )); then
+    if [ $# -ne 2 ]; then
         return 255
     fi
     echo "scale=$2; $1/1000" | bc -l
@@ -146,7 +229,7 @@ function divide_by_1000 () {
 # Return the result to the Standard Output
 # Example: return "96.8" if $1 is 5808000 and $2 is 184000
 function shrink_percent () {
-    if (( $# != 2 )); then
+    if [ $# != 2 ]; then
         return 255
     fi
     echo "scale=1; 100-$2*100/$1" | bc -l
@@ -170,38 +253,23 @@ command -v bc  1>/dev/null 2>&1 || {
 }
 
 
-# parsing arguments: "--press_any_key" or a file path
-press_any_key=false
-files=()
-for arg in "$@"; do
-    case "$arg" in
-        --press_any_key)
-            press_any_key=true
-            ;;
-        --help)
-            help_display
-            exit_script 0
-            ;;
-        --version)
-            version_display
-            exit_script 0
-            ;;
-        --* | -*)
-            echo "$(eval_gettext "\${ERR}ERROR: Incorrect command line argument \"\${arg}\".\${RESET}" )" 1>&2
-            exit_script 2
-            ;;
-        *)
-            files+=("$arg")
-            ;;
-    esac
-done
+
+# Parse command line arguments. Also handles show_version and show_help
+# globals set by this function:
+#   FILES   → array of file arguments: they all exist (exit 2 if any does not exist)
+#   PRESS_ANY_KEY, EXTREME_SHRINK → booleans
+parse_args "$@"
+
+if [ "${EXTREME_SHRINK}" = "true" ]; then
+    echo "$(gettext "Shrink mode: Extreme")"
+fi
 
 
 TEMP_SHRINKED_SUBEXT="$(gettext ".TEMP_SHRINKED")"      # The temporary name of the shrinked file will end with ".TEMP_SHRINKED.pdf"
 ORIGINAL_SUBEXT="$(gettext ".ORIGINAL")"                # "bak" file name: the new name of the original PDF file will end with ".ORIGINAL.pdf"
 
 # Process every file provided as arguments
-for input_file in "${files[@]}"
+for input_file in "${FILES[@]}"
 do
     echo
 
@@ -227,7 +295,7 @@ do
 
     # Skip the file if it is a file already renamed .${ORIGINAL_SUBEXT}${file_extension}): it is an original file previously processed by this script.
     extension2="$(file_extension "${filepath_minus_ext}")"      # second extension
-    if [[ "${extension2}" == "${ORIGINAL_SUBEXT}" ]]; then
+    if [ "${extension2}" = "${ORIGINAL_SUBEXT}" ]; then
         echo "$( eval_gettext "\${WARN}SKIPPED\${RESET} because it has been already shrinked before. To shrink it again, rename it: remove \"\${ORIGINAL_SUBEXT}\"." )"
         continue        # next file
     fi
@@ -236,34 +304,34 @@ do
     filesize_input_file_kB="$(divide_by_1000 ${filesize_input_file} 1)"     # size of the original file in kB
     
     # if the result file already exists (with its temporary name), then delete it. It could be the result of a previous shrinking attempt, interrupted before the renaming step.
-    if [[ -f "${result_file}" ]]; then
-        rm "${result_file}"
-        if (($? != 0 )); then
+    if [ -f "${result_file}" ]; then
+        if ! rm "${result_file}" 1>/dev/null; then
             echo "$( eval_gettext "\${ERR}ERROR: unable to delete \"\${result_file}\" before starting shrinking. Check access rights.\${RESET}" )" 1>&2
             exit_script 2
         fi
     fi
 
     # Use a Ghostscript command to shrink the PDF file
-    # The result file could be even smaller by using the argument “-dPDFSETTINGS=/screen,” though with a higher loss of quality (that many still consider acceptable).
-    gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${result_file}" "${input_file}"  1>/dev/null 2>&1
-    exit_code=$?
+    if [ "${EXTREME_SHRINK}" = "true" ]; then
+        dpdfsettings_value=/screen
+    else
+        dpdfsettings_value=/ebook
+    fi
 
-    # if the exit code is not 0 then display an error, delete the temporary result file (if any), then continue with the next file
-    if (( ${exit_code} != 0 )); then
+    # run the gs command. if the exit code is not 0 then display an error, delete the temporary result file (if any), then exit error
+    if ! gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS="${dpdfsettings_value}" -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${result_file}" "${input_file}"  1>/dev/null 2>&1; then
         echo "$( eval_gettext "\${ERR}ERROR: The shrinking command failed and returned an error. Most likely this is not a valid PDF file.\${RESET}" )" 1>&2
         # if the result file exists, delete it because it is probably corrupted (it happens sometimes with 'gs')
-        if [[ -f "${result_file}" ]]; then
-            rm "${result_file}"  1>/dev/null
-            if (($? != 0 )); then
+        if [ -f "${result_file}" ]; then
+            if ! rm "${result_file}" 1>/dev/null; then
                 echo "$( eval_gettext "\${ERR}ERROR: something went wrong trying to delete the result file. Check access rights.\${RESET}" )" 1>&2
             fi
         fi
-        ((nb_file_failed+=1))       # non-fatal failure: could be due to the file itself, so we continue to the next file
-        continue   # next file
+        exit_script 2
     fi
+    
     # if the result temporay file does not exist, display an error, then continue with the next file
-    if [[ ! -f "${result_file}" ]]; then
+    if [ ! -f "${result_file}" ]; then
         echo "$( eval_gettext "\${ERR}ERROR: something went wrong, no shrinking result file.\${RESET}" )"
         exit_script 2
     fi
@@ -282,13 +350,11 @@ do
         echo "$( eval_gettext "\${WARN}NOT shrinked:\${RESET} most likely this file is already as small as possible." )"
 
         # Delete the result file
-        rm "${result_file}"  1>/dev/null
-        if (($? == 0 )); then
+        if rm "${result_file}" 1>/dev/null; then
             continue    # next file
         else 
             echo "$( eval_gettext "\${ERR}ERROR: something went wrong trying to delete the result file. Check access rights.\${RESET}" )" 1>&2
-            ((nb_file_failed+=1))       # non-fatal failure: could be due to the file itself, so we continue to the next file
-            continue   # next file
+            exit_script 2
         fi
 
     fi
@@ -296,19 +362,16 @@ do
     # Successful shrinking: renaming steps
 
     # rename the source file as a "bak" file (.ORIGINAL in English)
-    mv "${input_file}" "${bak_file}"
-    if (($? != 0 )); then
+    
+    if ! mv "${input_file}" "${bak_file}" 1>/dev/null; then
         echo "$( eval_gettext "\${ERR}ERROR: something went wrong after shrinking. Unable to rename the original file as \"\${bak_file}\". Check access rights.\${RESET}" )" 1>&2
-        ((nb_file_failed+=1))       # non-fatal failure: could be due to the file itself, so we continue to the next file
-        continue
+        exit_script 2
     fi
 
     # rename the result file as the original file name    
-    mv "${result_file}" "${input_file}"
-    if (($? != 0 )); then
+    if ! mv "${result_file}" "${input_file}" 1/dev/null; then
         echo "$( eval_gettext "\${ERR}ERROR: something went wrong after shrinking. Unable to rename the temporary result file name \"\${result_file}\" as the original file name. Check access rights.\${RESET}" )" 1>&2
-        ((nb_file_failed+=1))       # non-fatal failure: could be due to the file itself, so we continue to the next file
-        continue
+        exit_script 2
     fi
 
     echo "$( eval_gettext "\${OK}\${shrink_percent} % shrinked.\${RESET}  (Original: \"\${bak_file_filename}\")" )"
@@ -317,13 +380,6 @@ done
     
 # End message
 echo
-if (( nb_file_failed > 0)); then
-    echo "$( eval_ngettext \
-    "\${ERR}ERROR: \${nb_file_failed} file with error during the shrinking process or the renaming after shrinking.\${RESET}" \
-    "\${ERR}ERROR: \${nb_file_failed} files with errors during the shrinking process or the renaming after shrinking.\${RESET}" \
-    "$nb_file_failed" )"
-else
-    echo "$(eval_gettext "\${OK}OKAY.\${RESET}")"
-fi
+echo "$(eval_gettext "\${OK}OKAY.\${RESET}")"
 
 exit_script 0 "$(eval_gettext "\${HIGHLIGHT}Press any key to finish...\${RESET}")"
