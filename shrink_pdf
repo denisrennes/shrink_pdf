@@ -72,20 +72,22 @@ function show_version () {
 
 # --help
 function show_help () {
-    eval_gettext <<EOF
-Usage: ${this_script_name} [OPTION]... PDF_FILE...
+    help_text=$(cat << EOM
+
+Usage: \${this_script_name} [OPTION]... PDF_FILE...
+
 Shrink PDF files when possible.
 
 OPTION
--k  --press_any_key        The user must press a key on the keyboard at the end.
-                           This allows them to read the result before the window
-                           closes automatically, for example when the programme
-                           is launched from the file manager.
--x  --extreme_shrink       Try shrinking even more, when possible. This may 
-                           result in a loss of quality.
--v  --version              Output version information and exit.
--h, --help                 Display this help and exit.
-    --                     End of options. Allows file names like '-h','-v'...
+-k  --press_any_key   The user must press a key on the keyboard at the end.
+                      This allows them to read the result before the window
+                      closes automatically, for example when the programme
+                      is launched from the file manager.
+-x  --extreme_shrink  Try shrinking even more, when possible. This may 
+                      result in a loss of quality.
+-v  --version         Output version information and exit.
+-h, --help            Display this help and exit.
+    --                End of options. Allows file names like '-h','-v'...
 
 PDF_FILE
     One or more PDF files to shrink.
@@ -93,8 +95,11 @@ PDF_FILE
 Exit status:
  0  Ok. (Some files may not be shrinked because already small.)
  2  Error.
- 255 Program error: wrong number of arguments for a function call, etc.
-EOF
+ 255 Program error (bug): wrong number of arguments for a function call, etc.
+EOM
+)
+
+    echo "$(eval_gettext "${help_text}")"
 }
 
 # Parse command line arguments. Also handles show_version and show_help
