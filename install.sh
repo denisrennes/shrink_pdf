@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail       # exit immediately in case of error
 
 # Installation of the shrink_pdf command and the "Shrink PDF" Nemo action if Nemo is detected
 
@@ -12,20 +13,26 @@ export TEXTDOMAINDIR="$(cd "$(dirname "$0")" && pwd)/locale"
 # $1: Optional message to display. Default: "Press any key...'"
 function press_any_key () {
     echo
-    if [[ -z ${1} ]]; then
-        echo "$(gettext "Press any key...")"
+    if [ $# -ge 1 ]; then
+        echo -n "${1}"
     else
-        echo "${1}"
+        echo -n "$(eval_gettext "\${HIGHLIGHT}Press any key...\${RESET}")"
     fi
-    read -s -n 1 
+    read -s -n 1
+    echo
 }
 
-# User input y or : Continue? y or n: exit 0 (success) if y, or 1 (failure) if n
+# User input y or : Continue? y or n: n ==> return 0 (success), y ==> return 1 (failure)
 # $1 is the text prompt. (' [y/n]' is appended)
-# exit 0 if y/Y
-# exit 1 if n/N
+# return 0 if y/Y
+# retrun 1 if n/N
 function yes_or_no () {
     yn_p="${1}""$(gettext " [y/n]: ")"
+    if [ $# -ge 1 ]; then
+        yn_p="${1} ""$(gettext "[y/n]: ")"
+    else
+        yn_p="$(gettext "Yes or No? [y/n]: ")"
+    fi
     while true; do
         read -n 1 -p "${yn_p}" yn
         echo
@@ -79,7 +86,7 @@ fi
 # Install confirmation
 echo
 echo "$( eval_gettext "This will install a shell command \"\${script_filename}\"." )"
-if [ $nemo_present ]; then
+if [ "${nemo_present}" = "true" ]; then
     echo "$( eval_gettext "This will also install a new \"\${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, the file manager, for PDF files." )"
 else
     echo "$( eval_gettext "As the file manager Nemo has NOT been detected, this will NOT install a new \"\${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, for PDF files." )"
@@ -134,7 +141,7 @@ sudo chmod u=rw,g=r,o=r "${dest_file_path}"
 echo "$(gettext "ok.")"
 
 # If Nemo is present, install the Nemo action for all users of the system
-if [ $nemo_present ]; then
+if [ "${nemo_present}" = "true" ]; then
     file_name="${nemo_action_filename}"
     source_file_path="${source_dir}/${file_name}"
     dest_directory="${nemo_actions_directory}"
@@ -148,7 +155,7 @@ fi
 # The End
 echo
 echo "$(gettext "The installation succeeded.")"
-if [ $nemo_present ]; then
+if [ "${nemo_present}" = "true" ]; then
     echo "$( eval_gettext "You may have to close and relaunch the file manager Nemo to use the new \"\${nemo_action_menu}\" context menu entry for PDF files." )"
 fi
 

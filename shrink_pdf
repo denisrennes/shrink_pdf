@@ -83,7 +83,7 @@ function show_help () {
     echo
     echo "$( eval_gettext "OPTION:" )"
     echo "$( eval_gettext "  -k  --press_any_key   Wait for any key to be pressed at the end." )"
-    echo "$( eval_gettext "  -x  --extreme_shrink  Shrink even more, if possible, at the expense of quality." )"
+    echo "$( eval_gettext "  -x  --extreme_shrink  Try to shrink even more, at the expense of quality." )"
     echo
     echo "$( eval_gettext "      --version         Output version information and exit." )"
     echo "$( eval_gettext "      --help            Display this help and exit." )"
