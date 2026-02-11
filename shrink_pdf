@@ -2,10 +2,9 @@
 set -euo pipefail       # exit immediately in case of error
 
 # Try to shrink the size of PDF files, using a Ghostscript command. See: https://www.digitalocean.com/community/tutorials/reduce-pdf-file-size-in-linux
-# All arguments are PDF files to shrink. They can be passed by a file manager custom context menu actions, like Nemo actions.
 
 # If the size of the PDF file has actually been reduced (at least 1 % shrinked), then the original file is renamed ‘.ORIGINAL.pdf’ and the new compressed file takes its name.
-# If the PDF file could not be reduced in size, it means it is already optimized. This tool will detect this and display a message, leaving the original PDF file unchanged.
+# If the PDF file could not be reduced in size, it means it is already optimized. shrink_pdf will report this and leave the document unchanged.
 
 # For translations
 . gettext.sh
@@ -72,40 +71,38 @@ function show_version () {
 
 # --help
 function show_help () {
-    help_text=$(cat << EOM
+    echo
+    echo "$( eval_gettext "\${this_script_name} tries to shrink the size of PDF files." )"
 
-Shrink PDF files when possible.
-
-Usage:    \${this_script_name} [OPTION]... PDF_FILE...
-
-Options:
-  -k  --press_any_key   Wait for any key to be pressed at the end.
-                        This allows them to read the result before the window
-                        closes automatically, for example when the program is
-                        launched from the file manager.
-  -x  --extreme_shrink  Try shrinking even more, when possible. This may 
-                        result in a loss of quality.
-
-      --version         Output version information and exit.
-      --help            Display this help and exit.
-
-PDF_FILE:
-    One or more PDF files to shrink.
-
-Exit status:
-    0  Ok. (Some files may not be shrinked because already small.)
-    2  Error.
-  255  Program error (bug): wrong number of arguments for a function call, etc.
-
-Examples:
-  \${this_script_name} ./big_doc.pdf
-
-  \${this_script_name} -x ./big_doc.pdf
-
-EOM
-)
-
-    echo "$(eval_gettext "${help_text}")"
+    echo "$( eval_gettext "It works particularly well with PDF files containing unoptimized images, such as documents scanned with xsane." )"
+    echo
+    echo "$( eval_gettext "If successful, i.e., if the file has been reduced by at least 10%, the original file is renamed \"<name>.ORIGINAL[.ext]\" and the reduced file takes its name." )"
+    echo "$( eval_gettext "When the reduction is less than 10%, \${this_script_name} reports this and leaves the document unchanged." )"
+    echo
+    echo "$( eval_gettext "Usage:    \${this_script_name} [OPTION]... PDF_FILE..." )"
+    echo
+    echo "$( eval_gettext "OPTION:" )"
+    echo "$( eval_gettext "  -k  --press_any_key   Wait for any key to be pressed at the end." )"
+    echo "$( eval_gettext "  -x  --extreme_shrink  Shrink even more, if possible, at the expense of quality." )"
+    echo
+    echo "$( eval_gettext "      --version         Output version information and exit." )"
+    echo "$( eval_gettext "      --help            Display this help and exit." )"
+    echo
+    echo "$( eval_gettext "PDF_FILE:" )"
+    echo "$( eval_gettext "    One or more PDF files to shrink." )"
+    echo
+    echo "$( eval_gettext "Exit status:" )"
+    echo "$( eval_gettext "    0  Ok. (Some files may not be shrinked because already optimized.)" )"
+    echo "$( eval_gettext "    2  Error." )"
+    echo "$( eval_gettext "  255  Program error (bug): wrong number of arguments for a function call, etc." )"
+    echo
+    echo "$( eval_gettext "Examples:" )"
+    echo "$( eval_gettext "  \${this_script_name} ./big_doc.pdf ./another_doc.pdf" )"
+    echo "$( eval_gettext "      This will try to shrink the two pdf files." )" 
+    echo
+    echo "$( eval_gettext "  \${this_script_name} -x ./big_doc.pdf" )"
+    echo "$( eval_gettext "      -x (or --extreme_shrink) will try to shrink even more." )"
+    echo
 }
 
 # Parse command line arguments. Also handles show_version and show_help
@@ -352,18 +349,18 @@ do
         exit_script 2
     fi
 
-    # Verify that the result file is at least 1% smaller than the original: 
-    # if so, rename the source file as a "bak" file and the result file will replace it, taking its name, 
-    # else delete the result file: the source file was already small
+    # Verify that the result file shrink percentage is 10% or more: 
+    # if so, rename the source file as a "bak" file (.ORIGINAL) and the result file will replace it, taking its name, 
+    # else delete the result file: the source file was already optimized.
     filesize_result_file=$(stat -c%s "${result_file}")                              # size of the result file
     filesize_result_file_kB="$(divide_by_1000 "${filesize_result_file}" 1)"           # size of the result file in kB
     shrink_percent="$(shrink_percent "${filesize_input_file}" "${filesize_result_file}")"    # shrink percentage
 
 
-    if (( $(echo "$shrink_percent < 1" | bc -l) )); then
+    if (( $(echo "$shrink_percent < 10" | bc -l) )); then
     
-        # The shrink percentage is less than 1%. Moreover it might be negative, meaning the result file is bigger
-        echo "$( eval_gettext "\${WARN}NOT shrinked:\${RESET} most likely this file is already as small as possible." )"
+        # The shrink percentage is less than 10%. Moreover it might be negative, meaning the result file is bigger
+        echo "$( eval_gettext "\${WARN}NOT shrinked:\${RESET} most likely this file is already optimized." )"
 
         # Delete the result file
         if rm "${result_file}" 1>/dev/null; then
