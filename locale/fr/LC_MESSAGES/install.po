@@ -5,115 +5,176 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.1.0\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-31 16:26+0100\n"
+"Project-Id-Version: shrink_pdf 1.2.0\n"
+"Report-Msgid-Bugs-To: https://github.com/denisrennes/shrink_pdf/issues\n"
+"POT-Creation-Date: 2026-02-12 19:47+0100\n"
 "PO-Revision-Date: 2026-01-16 16:42+0100\n"
 "Last-Translator: Denis <denisreindeer@gmail.com>\n"
-"Language-Team: French <traduc@traduc.org>\n"
+"Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: install.sh:16
-msgid "Press any key..."
-msgstr "Appuyez sur une touche..."
+#: install.sh:34
+#, sh-format
+msgid "${HIGHLIGHT}Press any key...${RESET}"
+msgstr "${HIGHLIGHT}Appuyez sur une touche...${RESET}"
 
-#: install.sh:28
+#: install.sh:46
+#, sh-format
+msgid "${HIGHLIGHT}Press any key to finish...${RESET}"
+msgstr "${HIGHLIGHT}Appuyez sur une touche pour terminer...${RESET}"
+
+#: install.sh:53
+#, sh-format
+msgid ""
+"${ERR}ERROR: function called with incorrect number of parameter.${RESET}"
+msgstr ""
+"${ERR}ERREUR: appel de function avec un nombre incorrect de paramètres.${RESET}"
+
+#: install.sh:64
 msgid " [y/n]: "
 msgstr " [o/n] "
 
-#: install.sh:33
+#: install.sh:66
+#
+msgid "[y/n]: "
+msgstr "[o/n]: "
+
+#: install.sh:68
+#
+msgid "Yes or No? [y/n]: "
+msgstr "Oui ou Non ? [o/n]: "
+
+#: install.sh:74
 msgid "Y"
 msgstr "O"
 
-#: install.sh:34
+#: install.sh:75
 msgid "N"
 msgstr "N"
 
-#: install.sh:52
-msgid "Shrink PDF"
-msgstr "Réduire PDF"
-
-#: install.sh:56
-msgid "ERROR: The \"gs\" command is required but not installed. (Ghostscript)"
-msgstr "ERREUR: La commande \"gs\" est requise mais n'est pas installée. (Ghostscript)"
-
-#: install.sh:62
-msgid ""
-"ERROR: The \"bc\" command is required but not installed. (Basic Calulator)"
-msgstr "ERREUR: La commande \"bc\" est requise mais n'est pas installée. (Basic Calulator)"
-
-#: install.sh:75
-#, sh-format
-msgid "This will install a shell command \"${script_filename}\"."
-msgstr "Cela va installer la commande shell \"${script_filename}\"."
-
-#: install.sh:77
+#: install.sh:88
 #, sh-format
 msgid ""
-"This will also install a new \"${nemo_action_menu}\" context menu entry "
-"(\"right-click\") in Nemo, the file manager, for PDF files."
+"${ERR}ERROR: ${FUNCNAME} function called with incorrect number of parameter."
+"${RESET}"
 msgstr ""
-"Cela va installer un nouveau choix \"${nemo_action_menu}\" dans le menu "
-"contextuel (\"clic-droit\") de Nemo le gestionnaire de fichiers, pour les "
-"fichiers PDF."
+"${ERR}ERREUR: appel de la fonction ${FUNCNAME} avec un nombre incorrect de paramètres."
+"${RESET}"
 
-#: install.sh:79
+#: install.sh:96
 #, sh-format
 msgid ""
-"As the file manager Nemo has NOT been detected, this will NOT install a new "
-"\"${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, for "
-"PDF files."
+"${ERR}ERROR: ${FUNCNAME} function called with a wrong parameter.${RESET}"
 msgstr ""
-"Comme le gestionnaire de fichiers Nemo n'a pas été détecté, il n'y aura PAS "
-"d'installation  du nouveau choix \"${nemo_action_menu}\" dans le menu "
-"contextuel (\"clic-droit\") de Nemo, pour les fichiers PDF."
+"${ERR}ERREUR: appel de la fonction ${FUNCNAME} avec un mauvais paramètre.${RESET}"
 
-#: install.sh:81
-msgid "Continue?"
-msgstr "Continuer ?"
-
-#: install.sh:82
-msgid "Canceled, ok."
-msgstr "Annulé, ok.'"
-
-#: install.sh:89
-msgid "We need elevated privileges to install: "
-msgstr "Nous avons besoins de privilèges élevés pour installer : "
-
-#: install.sh:92
-msgid "Installation canceled: Failed to get elevated privileges (sudo)."
-msgstr ""
-"Installation annulée : échec pour l'obtention des privilèges élevés (sudo)."
-
-#: install.sh:95
-msgid "ok for elevated privileges (sudo)."
-msgstr "ok pour les privilèges élevés (sudo)."
-
-#: install.sh:104 install.sh:115 install.sh:126
+#: install.sh:99
 #, sh-format
-msgid "Installation of \"${file_name}\" to \"${dest_directory}\" ... "
-msgstr "Installation de \"${file_name}\" vers \"${dest_directory}\" ... "
+msgid "Installation of \"${file_description}\": \"${dest_path}\"... "
+msgstr "Installation de \"${file_description}\": \"${dest_path}\"... "
 
-#: install.sh:107 install.sh:118 install.sh:129
+#: install.sh:101
+#, sh-format
+msgid "${ERR}ERROR: failed to install the file.${RESET}"
+msgstr "${ERR}ERREUR: échec de l'installation du fichier.${RESET}"
+
+#: install.sh:107
+#, sh-format
+msgid "${ERR}ERROR: failed to set access rights to the file.${RESET}"
+msgstr "${ERR}ERREUR: échec de la modification des droits d'accès du fichier.${RESET}"
+
+#: install.sh:111
 msgid "ok."
 msgstr "ok."
 
-#: install.sh:134
+#: install.sh:122
+msgid "Shrink PDF"
+msgstr "Réduire PDF"
+
+#: install.sh:127
+#, sh-format
+msgid ""
+"${ERR}ERROR: The \"gs\" command is required but not installed. "
+"(Ghostscript)${RESET}"
+msgstr ""
+"${ERR}ERREUR: La commande \"gs\" est requise mais n'est pas installée. "
+"(Ghostscript)${RESET}"
+
+#: install.sh:133
+#, sh-format
+msgid ""
+"${ERR}ERROR: The \"bc\" command is required but not installed. (Basic "
+"Calulator)${RESET}"
+msgstr ""
+"${ERR}ERREUR: La commande \"bc\" est requise mais n'est pas installée. (Basic "
+"Calulator)${RESET}"
+
+#: install.sh:146
+#, sh-format
+msgid "This will install a shell command \"${SCRIPT_FILENAME}\"."
+msgstr "Cela va installer la commande shell \"${SCRIPT_FILENAME}\"."
+
+#: install.sh:148
+#, sh-format
+msgid ""
+"This will also install a new \"${NEMO_ACTION_MENU}\" context menu entry "
+"(\"right-click\") in Nemo, the file manager, for PDF files."
+msgstr ""
+"Cela va installer un nouveau choix \"${NEMO_ACTION_MENU}\" dans le menu "
+"contextuel (\"clic-droit\") de Nemo le gestionnaire de fichiers, pour les "
+"fichiers PDF."
+
+#: install.sh:150
+#, sh-format
+msgid ""
+"As the file manager Nemo has NOT been detected, this will NOT install a new "
+"\"${NEMO_ACTION_MENU}\" context menu entry (\"right-click\") in Nemo, for "
+"PDF files."
+msgstr ""
+"Comme le gestionnaire de fichiers Nemo n'a pas été détecté, il n'y aura PAS "
+"d'installation  du nouveau choix \"${NEMO_ACTION_MENU}\" dans le menu "
+"contextuel (\"clic-droit\") de Nemo, pour les fichiers PDF."
+
+#: install.sh:152
+msgid "Continue?"
+msgstr "Continuer ?"
+
+#: install.sh:153
+msgid "Canceled, ok."
+msgstr "Annulé, ok.'"
+
+#: install.sh:160
+#
+msgid "You need elevated privileges to install: "
+msgstr "Vous avez besoins de privilèges élevés pour installer : "
+
+#: install.sh:163
+#, sh-format
+msgid ""
+"${ERR}ERROR: Installation canceled: Failed to get elevated privileges (sudo)."
+"${RESET}"
+msgstr ""
+"${ERR}ERROR: Installation annulée : échec pour l'obtention des privilèges élevés (sudo)."
+"${RESET}"
+
+#: install.sh:166
+msgid "ok for elevated privileges (sudo)."
+msgstr "ok pour les privilèges élevés (sudo)."
+
+#: install.sh:215
 msgid "The installation succeeded."
 msgstr "L'installation a réussi."
 
-#: install.sh:136
+#: install.sh:217
 #, sh-format
 msgid ""
 "You may have to close and relaunch the file manager Nemo to use the new "
-"\"${nemo_action_menu}\" context menu entry for PDF files."
+"\"${NEMO_ACTION_MENU}\" context menu entry for PDF files."
 msgstr ""
 "Vous aurez peut-être à fermer et relancer le gestionnaire de fichiers Nemo "
-"pour utiliser le nouveau choix \"${nemo_action_menu}\" du menu contextuel "
+"pour utiliser le nouveau choix \"${NEMO_ACTION_MENU}\" du menu contextuel "
 "des fichiers PDF."
-
-

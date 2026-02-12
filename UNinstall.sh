@@ -1,12 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail       # exit immediately in case of error
 
-#Uninstallation of the shrink_pdf command and the "Shrink PDF" Nemo action.
+# Uninstallation of the shrink_pdf command and the "Shrink PDF" Nemo action
 
 # For translations of this installation script
 . gettext.sh
 export TEXTDOMAIN="$(basename "$0" '.sh')"
 export TEXTDOMAINDIR="$(cd "$(dirname "$0")" && pwd)/locale"
+
+# Colors and highligh in outputs
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BOLD=$(tput bold)
+RESET=$(tput sgr0)
+
+ERR="${RED}${BOLD}"
+OK="${GREEN}${BOLD}"
+WARN="${YELLOW}${BOLD}"
+HIGHLIGHT="${BOLD}"
+
+# Always "press any key" prompt at the end
+PRESS_ANY_KEY=true
 
 
 # Display a given message then waits for any key to be pressed, then return
@@ -21,6 +36,25 @@ function press_any_key () {
     read -s -n 1
     echo
 }
+
+# Exit this script with an exit code, possibly after a "press any key"
+function exit_script () {
+    local exit_message
+    if [ $# -ge 2 ]; then
+        exit_message="${2}"
+    else
+        exit_message="$(eval_gettext "\${HIGHLIGHT}Press any key to finish...\${RESET}")"
+    fi
+    if [ "${PRESS_ANY_KEY}" = true ]; then press_any_key "${exit_message}"; fi
+
+    if [ $# -ge 1 ]; then
+        exit ${1}
+    else
+        echo "$(eval_gettext "\${ERR}ERROR: function called with incorrect number of parameter.\${RESET}" )" 1>&2
+        exit 255    # bug: function called with incorrect number of parameter
+    fi
+}
+
 
 # User input y or : Continue? y or n: n ==> return 0 (success), y ==> return 1 (failure)
 # $1 is the text prompt. (' [y/n]' is appended)
@@ -44,120 +78,99 @@ function yes_or_no () {
 }
 
 
+# Unstallation of a file: rm <source_path> <dest_path>
+# $1 Mandatory. Description of the file. Example "Main command", "French translation", etc.
+# $2 Mandatory. Destination path.
+function uninstall_file () {
+    if [ $# -ne 2 ]; then
+        echo "$(eval_gettext "\${ERR}ERROR: \${FUNCNAME} function called with incorrect number of parameter.\${RESET}" )" 1>&2
+        exit_script 255    # bug: function called with incorrect parameter
+    fi
+    local file_description=$1
+    local dest_path=$2
+
+    echo -n "$( eval_gettext "UNinstallation of \"\${file_description}\": \"\${dest_path}\"... " )"
+    if [ -f "${dest_path}" ]; then
+        if ! sudo rm "${dest_path}" ; then
+            echo "$(eval_gettext "\${ERR}ERROR: failed to uninstall the file.\${RESET}" )" 1>&2
+            exit_script 2   # Installation failure
+        fi
+    else
+        echo -n "$( gettext "Does not exist. " )"
+    fi
+    echo "$(gettext "ok.")"
+}
+
+
+
 # Source directory: where is this script currently running
-source_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SOURCE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-# install location for the script
-script_filename="shrink_pdf"
-script_directory="/usr/bin"
-# install location for the translation files of the script
-locale_file_filename="shrink_pdf.mo"
-locale_directory="/usr/share/locale"
-# install location for the Nemo action
-nemo_action_filename="shrink_pdf.nemo_action"
-nemo_actions_directory="/usr/share/nemo/actions"
-nemo_action_menu="$(gettext "Shrink PDF")"
-# install location for the English man page file
-man_page_en_filename="shrink_pdf.nemo_action"
-man_page_en_directory="/usr/share/man/man1"
-# install location for the French man page file
-Man_page_fr_directory="/usr/share/man/fr/man1"
+# Name of the script ot install
+SCRIPT_FILENAME="shrink_pdf"
 
+NEMO_ACTION_MENU="$(gettext "Shrink PDF")"
 
-# Error exit if "gs" is not installed (Ghostscript command)
-command -v gs >/dev/null 2>&1 || {
-    echo "$(gettext "ERROR: The \"gs\" command is required but not installed. (Ghostscript)" )" >&2
-    exit 1
-}
-
-# Error exit if "bc" is not installed (Basic Calculator)
-command -v bc >/dev/null 2>&1 || {
-    echo "$(gettext "ERROR: The \"bc\" command is required but not installed. (Basic Calulator)" )" >&2
-    exit 1
-}
-
-# Is Nemo present?
-if command -v nemo 1>/dev/null 2>&1 && [ -d "${nemo_actions_directory}" ]; then 
-    nemo_present=true
-else
-    nemo_present=false
-fi
-
-# Install confirmation
+# Uninstall confirmation
 echo
-echo "$( eval_gettext "This will install a shell command \"\${script_filename}\"." )"
-if [ "${nemo_present}" = "true" ]; then
-    echo "$( eval_gettext "This will also install a new \"\${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, the file manager, for PDF files." )"
-else
-    echo "$( eval_gettext "As the file manager Nemo has NOT been detected, this will NOT install a new \"\${nemo_action_menu}\" context menu entry (\"right-click\") in Nemo, for PDF files." )"
-fi
+echo "$( eval_gettext "This will UNinstall \"\${SCRIPT_FILENAME}\"." )"
 if ! yes_or_no "$(gettext "Continue?")"; then
     echo "$(gettext "Canceled, ok.")"
-    exit 2
+    exit_script 0
 fi 
 
 echo
 
 # Ask for elevated privileges (sudo)
-echo -n "$( gettext "We need elevated privileges to install: " )"
+echo -n "$( gettext "You need elevated privileges to uninstall: " )"
 sudo -v
 if [ $? -ne 0 ]; then
-    echo "$( gettext "Installation canceled: Failed to get elevated privileges (sudo)." )"
-    exit 1
+    echo "$( gettext "\${ERR}ERROR: Uninstallation canceled: Failed to get elevated privileges (sudo).\${RESET}" )"
+    exit_script 253       # Error: missing prerequisite
 fi
 echo "$( gettext "ok for elevated privileges (sudo).")"
 
 echo
 
 # Install the script for all users of the system, in /usr/bin (should be in $PATH)
-file_name="${script_filename}"
-source_file_path="${source_dir}/${file_name}"
-dest_directory="${script_directory}"
-dest_file_path="${dest_directory}/${script_filename}"
-echo -n "$( eval_gettext "Installation of \"\${file_name}\" to \"\${dest_directory}\" ... " )"
-sudo cp "${source_file_path}" "${dest_file_path}"
-sudo chmod u=rwx,g=rx,o=rx "${dest_file_path}"
-echo "$(gettext "ok.")"
+file_description="main command"
+dest_file_path="/usr/bin/${SCRIPT_FILENAME}"
+uninstall_file "${file_description}" "${dest_file_path}"
 
-# Install the English man page for all users of the system
-file_name="${script_filename}.1.gz"
-source_file_path="${source_dir}/${file_name}"
-dest_directory="${man_page_en_directory}"
-dest_file_path="${dest_directory}/${file_name}"
-echo -n "$( eval_gettext "Installation of \"\${file_name}\" to \"\${dest_directory}\" ... " )"
-sudo cp "${source_file_path}" "${dest_file_path}"
-sudo chmod u=rw,g=r,o=r "${dest_file_path}"
-echo "$(gettext "ok.")"
+# files and directory for translation files of the script
+LOCALE_FILE_NAME="shrink_pdf.mo"
+LOCALE_DIRECTORY="/usr/share/locale"
 
 # Install the 'fr' translation files of the script for all users of the system, in /usr/share/locale
+file_description="French translation"
 lang="fr"
-file_name="${locale_file_filename}"
-source_file_path="${source_dir}/locale/${lang}/LC_MESSAGES/${file_name}"
-dest_directory="${locale_directory}/${lang}/LC_MESSAGES"
-dest_file_path="${dest_directory}/${locale_file_filename}"
-echo -n "$( eval_gettext "Installation of \"\${file_name}\" to \"\${dest_directory}\" ... " )"
-sudo cp "${source_file_path}" "${dest_file_path}"
-sudo chmod u=rw,g=r,o=r "${dest_file_path}"
-echo "$(gettext "ok.")"
+dest_file_path="${LOCALE_DIRECTORY}/${lang}/LC_MESSAGES/${LOCALE_FILE_NAME}"
+uninstall_file "${file_description}" "${dest_file_path}"
+
 
 # If Nemo is present, install the Nemo action for all users of the system
-if [ "${nemo_present}" = "true" ]; then
-    file_name="${nemo_action_filename}"
-    source_file_path="${source_dir}/${file_name}"
-    dest_directory="${nemo_actions_directory}"
-    dest_file_path="${dest_directory}/${nemo_action_filename}"
-    echo -n "$( eval_gettext "Installation of \"\${file_name}\" to \"\${dest_directory}\" ... " )"
-    sudo cp "${source_file_path}" "${dest_file_path}"
-    sudo chmod u=rw,g=r,o=r "${dest_file_path}"
-    echo "$(gettext "ok.")"
-fi
+file_description="Nemo action"
+nemo_action_filename="shrink_pdf.nemo_action"
+dest_file_path="/usr/share/nemo/actions/${nemo_action_filename}"
+uninstall_file "${file_description}" "${dest_file_path}"
+
+# Install the English man page for all users of the system
+file_description="English man page"
+man_page_en_filename="${SCRIPT_FILENAME}.1.gz"
+dest_file_path="/usr/share/man/man1/${man_page_en_filename}"
+uninstall_file "${file_description}" "${dest_file_path}"
+
+
+# Install the French man page for all users of the system
+file_description="French man page"
+lang="fr"
+dest_file_path="/usr/share/man/${lang}/man1/${SCRIPT_FILENAME}.1.gz"
+uninstall_file "${file_description}" "${dest_file_path}"
+
 
 # The End
 echo
-echo "$(gettext "The installation succeeded.")"
-if [ "${nemo_present}" = "true" ]; then
-    echo "$( eval_gettext "You may have to close and relaunch the file manager Nemo to use the new \"\${nemo_action_menu}\" context menu entry for PDF files." )"
-fi
+echo "$(gettext "The UNinstallation succeeded.")"
 
 press_any_key
 exit 0

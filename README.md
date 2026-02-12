@@ -9,8 +9,8 @@ Usage:
 
 * If the file manager ***Nemo*** is present: a new **"Shrink PDF" context menu** is added in *Nemo*. ("right-click" menu on selected PDF files.)
 
-If the PDF file size has actually been reduced by **at least 10 %**, it will replace the original. The original file is renamed `... .ORIGINAL.pdf` (for English or French language).  
-Otherwise, shrink_pdf will display a message and leave the file unchanged. The file is probably already as small as possible.  
+If the PDF file size has actually been reduced by **at least 10 %**, it will replace the original. The original file is renamed `<name>.ORIGINAL[.ext]` (for English or French language).  
+If the shrink result is less than 10 % then the file is left unchanged: it is probably already as small as possible.  
 
 Today, this tool works in **English** (default) or **French**.
 
@@ -49,7 +49,7 @@ Or just delete these files:
 
 ### Under the hood
 **shrink_pdf** is using a Ghostscript command.  See https://aakashnand.com/til/compress-pdf-ghostscript/  
-**shrink_pdf** makes this command easily accessible, displays the shrink rate, handles the shrinked or not shrinked result, as well as the original file renaming. 
+**shrink_pdf** makes this command easily accessible, displays the shrink rate, handles the shrinked / not shrinked result, as well as the original file renaming. 
 
 ### To do (maybe one day...)
 - Create a .deb package
