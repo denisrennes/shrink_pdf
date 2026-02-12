@@ -18,9 +18,9 @@ export TEXTDOMAINDIR
 
 ##### FUNCTIONS and basic initialization #####
 
-# Command and version for --help
+# Command and version
 this_script_name="$(basename "$0")"
-this_script_version="1.1.3"
+this_script_version="1.2.0"
 
 # Colors and highligh in outputs
 RED=$(tput setaf 1)
@@ -60,7 +60,8 @@ function exit_script () {
     if [ $# -ge 1 ]; then
         exit ${1}
     else
-        exit 2
+        echo "$(eval_gettext "\${ERR}ERROR: function called with incorrect number of parameter.\${RESET}" )" 1>&2
+        exit 255    # bug: function called with incorrect number of parameter
     fi
 }
 
@@ -93,7 +94,9 @@ function show_help () {
     echo
     echo "$( eval_gettext "Exit status:" )"
     echo "$( eval_gettext "    0  Ok. (Some files may not be shrinked because already optimized.)" )"
-    echo "$( eval_gettext "    2  Error." )"
+    echo "$( eval_gettext "    1  Some files with errors trying to shrink or rename them." )"
+    echo "$( eval_gettext "  253  Error: missing prerequisite." )"
+    echo "$( eval_gettext "  254  Error in the arguments of the calling command line." )"
     echo "$( eval_gettext "  255  Program error (bug): wrong number of arguments for a function call, etc." )"
     echo
     echo "$( eval_gettext "Examples:" )"
@@ -147,7 +150,7 @@ parse_args() {
 #             -o|--output)
 #             if [ $# -lt 1 ]; then
 #                 echo "$(eval_gettext "\${ERR}ERROR: Missing argument for \"\${arg}\".\${RESET}" )" 1>&2
-#                 exit_script 2
+#                 exit_script 254       # Error in the arguments of the calling command line
 #             fi
 #             OUTPUT="$1"
 #             shift
@@ -159,7 +162,7 @@ parse_args() {
 #                ;;
             -*)
                 echo "$(eval_gettext "\${ERR}ERROR: unknown option argument \"\${arg}\".\${RESET}" )" 1>&2
-                exit_script 2
+                exit_script 254       # Error in the arguments of the calling command line
                 ;;
             esac
         fi
@@ -168,14 +171,14 @@ parse_args() {
             FILES+=("$arg")
         else
             echo "$(eval_gettext "\${ERR}ERROR: cannot access \"\${arg}\". No such file.\${RESET}" )" 1>&2
-            exit_script 2
+            exit_script 254       # Error in the arguments of the calling command line
         fi
 
     done
 
     if [ ${#FILES[@]} -eq 0 ]; then
         echo "$(eval_gettext "\${ERR}ERROR: at least one FILE argument is required.\${RESET}" )" 1>&2
-        exit_script 2
+        exit_script 254       # Error in the arguments of the calling command line
     fi
 }
 
@@ -231,7 +234,8 @@ function path_without_extension () {
 # Return the result to the Standard Output
 function divide_by_1000 () {
     if [ $# -ne 2 ]; then
-        return 255
+        echo "$(eval_gettext "\${ERR}ERROR: function called with incorrect number of parameter.\${RESET}" )" 1>&2
+        return 255    # bug: function called with incorrect number of parameter
     fi
     echo "scale=$2; $1/1000" | bc -l
 }
@@ -243,7 +247,8 @@ function divide_by_1000 () {
 # Example: return "96.8" if $1 is 5808000 and $2 is 184000
 function shrink_percent () {
     if [ $# != 2 ]; then
-        return 255
+        echo "$(eval_gettext "\${ERR}ERROR: function called with incorrect number of parameter.\${RESET}" )" 1>&2
+        return 255    # bug: function called with incorrect number of parameter
     fi
     echo "scale=1; 100-$2*100/$1" | bc -l
 }
@@ -256,13 +261,13 @@ function shrink_percent () {
 # Error exit if "gs" is not installed (Ghostscript command)
 command -v gs  1>/dev/null 2>&1 || {
     echo "$(eval_gettext "\${ERR}ERROR: The \"gs\" command is required but not installed. (Ghostscript)\${RESET}" )" 1>&2
-    exit_script 2
+    exit_script 253       # Error: missing prerequisite
 }
 
 # Error exit if "bc" is not installed (Basic Calculator)
 command -v bc  1>/dev/null 2>&1 || {
     echo "$(eval_gettext "\${ERR}ERROR: The \"bc\" command is required but not installed. (Basic Calulator)\${RESET}" )" 1>&2
-    exit_script 2
+    exit_script 253       # Error: missing prerequisite
 }
 
 
@@ -280,6 +285,13 @@ fi
 
 TEMP_SHRINKED_SUBEXT="$(gettext ".TEMP_SHRINKED")"      # The temporary name of the shrinked file will end with ".TEMP_SHRINKED.pdf"
 ORIGINAL_SUBEXT="$(gettext ".ORIGINAL")"                # "bak" file name: the new name of the original PDF file will end with ".ORIGINAL.pdf"
+
+
+# file counters
+nb_file_ok=0                # Number of files successfully shrinked
+nb_file_not_shrinked=0      # Number of files NOT shrinked: already small or previously processed.
+nb_file_error=0             # Number of files with errors trying to shrink or rename them.
+
 
 # Process every file provided as arguments
 for input_file in "${FILES[@]}"
@@ -301,8 +313,8 @@ do
 
     # Skip the file if its corresponding original file (renamed as a "bak" file) exists in the same directory
     if [[ -f "${bak_file}" ]]; then
-        msg="$( eval_gettext "\${WARN}SKIPPED\${RESET} because it is probably the shrinking result of \"\${bak_file_filename}\"" )"
-        echo "${msg}"
+        echo "$( eval_gettext "\${WARN}SKIPPED\${RESET} because it is probably the shrinking result of \"\${bak_file_filename}\"" )"
+        nb_file_not_shrinked=$((nb_file_not_shrinked+1))      # Number of files NOT shrinked: already small or previously processed.
         continue        # next file
     fi
 
@@ -310,6 +322,7 @@ do
     extension2="$(file_extension "${filepath_minus_ext}")"      # second extension
     if [ "${extension2}" = "${ORIGINAL_SUBEXT}" ]; then
         echo "$( eval_gettext "\${WARN}SKIPPED\${RESET} because it has been already shrinked before. To shrink it again, rename it: remove \"\${ORIGINAL_SUBEXT}\"." )"
+        nb_file_not_shrinked=$((nb_file_not_shrinked+1))      # Number of files NOT shrinked: already small or previously processed.
         continue        # next file
     fi
 
@@ -320,7 +333,8 @@ do
     if [ -f "${result_file}" ]; then
         if ! rm "${result_file}" 1>/dev/null; then
             echo "$( eval_gettext "\${ERR}ERROR: unable to delete \"\${result_file}\" before starting shrinking. Check access rights.\${RESET}" )" 1>&2
-            exit_script 2
+            nb_file_error=$((nb_file_error+1))      # Number of files with errors trying to shrink or rename them.
+            continue    # next file
         fi
     fi
 
@@ -331,7 +345,7 @@ do
         dpdfsettings_value=/ebook
     fi
 
-    # run the gs command. if the exit code is not 0 then display an error, delete the temporary result file (if any), then exit error
+    # run the gs command. if the exit code is not 0 then display an error, delete the temporary result file (if any), then continue with the next file
     if ! gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS="${dpdfsettings_value}" -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${result_file}" "${input_file}"  1>/dev/null 2>&1; then
         echo "$( eval_gettext "\${ERR}ERROR: The shrinking command failed and returned an error. Most likely this is not a valid PDF file.\${RESET}" )" 1>&2
         # if the result file exists, delete it because it is probably corrupted (it happens sometimes with 'gs')
@@ -340,13 +354,15 @@ do
                 echo "$( eval_gettext "\${ERR}ERROR: something went wrong trying to delete the result file. Check access rights.\${RESET}" )" 1>&2
             fi
         fi
-        exit_script 2
+        nb_file_error=$((nb_file_error+1))      # Number of files with errors trying to shrink or rename them.
+        continue    # next file
     fi
     
     # if the result temporay file does not exist, display an error, then continue with the next file
     if [ ! -f "${result_file}" ]; then
         echo "$( eval_gettext "\${ERR}ERROR: something went wrong, no shrinking result file.\${RESET}" )"
-        exit_script 2
+        nb_file_error=$((nb_file_error+1))      # Number of files with errors trying to shrink or rename them.
+        continue    # next file
     fi
 
     # Verify that the result file shrink percentage is 10% or more: 
@@ -364,10 +380,12 @@ do
 
         # Delete the result file
         if rm "${result_file}" 1>/dev/null; then
+            nb_file_not_shrinked=$((nb_file_not_shrinked+1))      # Number of files NOT shrinked: already small or previously processed.
             continue    # next file
         else 
             echo "$( eval_gettext "\${ERR}ERROR: something went wrong trying to delete the result file. Check access rights.\${RESET}" )" 1>&2
-            exit_script 2
+            nb_file_error=$((nb_file_error+1))      # Number of files with errors trying to shrink or rename them.
+            continue    # next file
         fi
 
     fi
@@ -378,21 +396,40 @@ do
     
     if ! mv "${input_file}" "${bak_file}" 1>/dev/null; then
         echo "$( eval_gettext "\${ERR}ERROR: something went wrong after shrinking. Unable to rename the original file as \"\${bak_file}\". Check access rights.\${RESET}" )" 1>&2
-        exit_script 2
+        nb_file_error=$((nb_file_error+1))      # Number of files with errors trying to shrink or rename them.
+        continue    # next file
     fi
 
     # rename the result file as the original file name    
     if ! mv "${result_file}" "${input_file}" 1>/dev/null; then
         echo "$( eval_gettext "\${ERR}ERROR: something went wrong after shrinking. Unable to rename the temporary result file name \"\${result_file}\" as the original file name. Check access rights.\${RESET}" )" 1>&2
-        exit_script 2
+        nb_file_error=$((nb_file_error+1))      # Number of files with errors trying to shrink or rename them.
+        continue    # next file
     fi
 
     echo "$( eval_gettext "\${OK}\${shrink_percent} % shrinked.\${RESET}  (Original: \"\${bak_file_filename}\")" )"
+    nb_file_ok=$((nb_file_ok+1))    # Number of files successfully shrinked
     
 done
     
 # End message
 echo
-echo "$(eval_gettext "\${OK}OKAY.\${RESET}")"
+echo $( eval_ngettext \
+    "\${OK}\${nb_file_ok} file successfully shrinked.\${RESET}" \
+    "\${OK}\${nb_file_ok} files successfully shrinked.\${RESET}" \
+    "$nb_file_ok" )
+if [ "${nb_file_not_shrinked}" -gt 0 ]; then 
+    echo $( eval_ngettext \
+        "\${OK}\${nb_file_not_shrinked} file NOT shrinked: already small or previously processed.\${RESET}" \
+        "\${OK}\${nb_file_not_shrinked} files NOT shrinked: already small or previously processed.\${RESET}" \
+        "$nb_file_not_shrinked" )
+fi
+if [ "${nb_file_error}" -gt 0 ]; then 
+    echo $( eval_ngettext \
+        "\${ERR}\${nb_file_error} file with error trying to shrink or rename it.\${RESET}" \
+        "\${ERR}\${nb_file_error} files with errors trying to shrink or rename them.\${RESET}" \
+        "$nb_file_error" )
+    exit_script 1       # Some files with errors trying to shrink or rename them.
+fi
 
-exit_script 0 "$(eval_gettext "\${HIGHLIGHT}Press any key to finish...\${RESET}")"
+exit_script 0       # Ok. (Some files may not be shrinked because already optimized.)

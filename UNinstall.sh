@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail       # exit immediately in case of error
 
-# Installation of the shrink_pdf command and the "Shrink PDF" Nemo action if Nemo is detected
+#Uninstallation of the shrink_pdf command and the "Shrink PDF" Nemo action.
 
 # For translations of this installation script
 . gettext.sh
 export TEXTDOMAIN="$(basename "$0" '.sh')"
 export TEXTDOMAINDIR="$(cd "$(dirname "$0")" && pwd)/locale"
+
 
 # Display a given message then waits for any key to be pressed, then return
 # $1: Optional message to display. Default: "Press any key...'"
@@ -57,11 +58,10 @@ nemo_action_filename="shrink_pdf.nemo_action"
 nemo_actions_directory="/usr/share/nemo/actions"
 nemo_action_menu="$(gettext "Shrink PDF")"
 # install location for the English man page file
-man_page_en_filename="${script_filename}.1.gz"
+man_page_en_filename="shrink_pdf.nemo_action"
 man_page_en_directory="/usr/share/man/man1"
 # install location for the French man page file
-man_page_fr_filename="${script_filename}-fr.1.gz"
-man_page_fr_directory="/usr/share/man/fr/man1"
+Man_page_fr_directory="/usr/share/man/fr/man1"
 
 
 # Error exit if "gs" is not installed (Ghostscript command)
@@ -119,6 +119,16 @@ sudo cp "${source_file_path}" "${dest_file_path}"
 sudo chmod u=rwx,g=rx,o=rx "${dest_file_path}"
 echo "$(gettext "ok.")"
 
+# Install the English man page for all users of the system
+file_name="${script_filename}.1.gz"
+source_file_path="${source_dir}/${file_name}"
+dest_directory="${man_page_en_directory}"
+dest_file_path="${dest_directory}/${file_name}"
+echo -n "$( eval_gettext "Installation of \"\${file_name}\" to \"\${dest_directory}\" ... " )"
+sudo cp "${source_file_path}" "${dest_file_path}"
+sudo chmod u=rw,g=r,o=r "${dest_file_path}"
+echo "$(gettext "ok.")"
+
 # Install the 'fr' translation files of the script for all users of the system, in /usr/share/locale
 lang="fr"
 file_name="${locale_file_filename}"
@@ -141,27 +151,6 @@ if [ "${nemo_present}" = "true" ]; then
     sudo chmod u=rw,g=r,o=r "${dest_file_path}"
     echo "$(gettext "ok.")"
 fi
-
-
-# Install the English man page for all users of the system
-file_name="${script_filename}.1.gz"
-source_file_path="${source_dir}/${file_name}"
-dest_directory="${man_page_en_directory}"
-dest_file_path="${dest_directory}/${file_name}"
-echo -n "$( eval_gettext "Installation of \"\${file_name}\" to \"\${dest_directory}\" ... " )"
-sudo cp "${source_file_path}" "${dest_file_path}"
-sudo chmod u=rw,g=r,o=r "${dest_file_path}"
-echo "$(gettext "ok.")"
-
-# Install the French man page for all users of the system
-file_name="${man_page_fr_filename}"
-source_file_path="${source_dir}/${file_name}"
-dest_directory="${man_page_fr_directory}"
-dest_file_path="${dest_directory}/${file_name}"
-echo -n "$( eval_gettext "Installation of \"\${file_name}\" to \"\${dest_directory}\" ... " )"
-sudo cp "${source_file_path}" "${dest_file_path}"
-sudo chmod u=rw,g=r,o=r "${dest_file_path}"
-echo "$(gettext "ok.")"
 
 # The End
 echo

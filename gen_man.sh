@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Installation of the shrink_pdf command and the "Shrink PDF" Nemo action if Nemo is detected
+# Generate the man pages for shrink_pdf in ENglish eand French, using help2man
 
 # For translations of this installation script
 . gettext.sh
@@ -45,14 +45,13 @@ script_filename="shrink_pdf"
 
 # Install confirmation
 echo
-echo "$( eval_gettext "This will generate the man pages for \"\${script_filename}\"." )"
+echo "$( eval_gettext "This will generate the English and French man pages for \"\${script_filename}\"." )"
 if ! yes_or_no "$(gettext "Continue?")"; then
     echo "$(gettext "Canceled, ok.")"
     exit 2
 fi 
 
 echo
-
 
 # Generate the English man page
 file_name="${script_filename}.1"
