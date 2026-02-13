@@ -23,7 +23,6 @@ This happens typically with some scanned documents, although this depends on the
 - *Simple Scan*, a.k.a. *Document Scanner,* does not produce large PDF files, but the results are sometimes unsatisfactory, leading some users to install *Xsane* .
 
 ### Requirements
-- A Linux system.
 - **gs** command, from Ghostscript: present in most Linux distributions.
 - **bc** command, from Basic Calulator: present in most Linux distributions.
 - **Bash** : present in most Linux distributions
@@ -53,6 +52,6 @@ Or just delete these files:
 
 ### To do (maybe one day...)
 - Create a .deb package
-- Context menu (right-click) in *Nautilus*, the default file manager of *Gnome* or *Ubuntu* (I can't decide which *Nautilus* extension to use for *Nautilus* actions...)
+- Context menu (right-click) in *Nautilus*, the default file manager of *Gnome* or *Ubuntu*  
+I can't decide which *Nautilus* extension to use for *Nautilus* actions. For *actions-for-Nautilus* ( https://github.com/bassmanitram/actions-for-nautilus ), see the file `command_for_Action_For_Nautilus.json`
 - Improve `gen_mo.sh` for translation to other languages by the user?
-

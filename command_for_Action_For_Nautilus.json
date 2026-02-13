@@ -1,0 +1,10 @@
+        {
+            "type": "command",
+            "label": "Shrink PDF",
+            "command_line": "gnome-terminal -t \"Shrink PDF\" -- shrink_pdf --press_any_key %F",
+            "use_v1_interpolation": false,
+            "mimetypes": [
+                "application/pdf"
+            ],
+            "mimetypes_strict_match": true
+        }
