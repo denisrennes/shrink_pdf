@@ -89,7 +89,7 @@ function uninstall_file () {
     local file_description=$1
     local dest_path=$2
 
-    echo -n "$( eval_gettext "UNinstallation of \"\${file_description}\": \"\${dest_path}\"... " )"
+    echo -n "$( eval_gettext "UNinstallation of the \${file_description}: \"\${dest_path}\"... " )"
     if [ -f "${dest_path}" ]; then
         if ! sudo rm "${dest_path}" ; then
             echo "$(eval_gettext "\${ERR}ERROR: failed to uninstall the file.\${RESET}" )" 1>&2
@@ -132,7 +132,7 @@ echo "$( gettext "ok for elevated privileges (sudo).")"
 
 echo
 
-# Install the script for all users of the system, in /usr/bin (should be in $PATH)
+# Uninstall the script for all users of the system
 file_description="main command"
 dest_file_path="/usr/bin/${SCRIPT_FILENAME}"
 uninstall_file "${file_description}" "${dest_file_path}"
@@ -141,27 +141,27 @@ uninstall_file "${file_description}" "${dest_file_path}"
 LOCALE_FILE_NAME="shrink_pdf.mo"
 LOCALE_DIRECTORY="/usr/share/locale"
 
-# Install the 'fr' translation files of the script for all users of the system, in /usr/share/locale
+# Uninstall the 'fr' translation files of the script for all users of the system
 file_description="French translation"
 lang="fr"
 dest_file_path="${LOCALE_DIRECTORY}/${lang}/LC_MESSAGES/${LOCALE_FILE_NAME}"
 uninstall_file "${file_description}" "${dest_file_path}"
 
 
-# If Nemo is present, install the Nemo action for all users of the system
+# Uninstall the Nemo action for all users of the system
 file_description="Nemo action"
 nemo_action_filename="shrink_pdf.nemo_action"
 dest_file_path="/usr/share/nemo/actions/${nemo_action_filename}"
 uninstall_file "${file_description}" "${dest_file_path}"
 
-# Install the English man page for all users of the system
+# Uninstall the English man page for all users of the system
 file_description="English man page"
 man_page_en_filename="${SCRIPT_FILENAME}.1.gz"
 dest_file_path="/usr/share/man/man1/${man_page_en_filename}"
 uninstall_file "${file_description}" "${dest_file_path}"
 
 
-# Install the French man page for all users of the system
+# Uninstall the French man page for all users of the system
 file_description="French man page"
 lang="fr"
 dest_file_path="/usr/share/man/${lang}/man1/${SCRIPT_FILENAME}.1.gz"
