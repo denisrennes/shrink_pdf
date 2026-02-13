@@ -24,7 +24,7 @@ This happens typically with some scanned documents, although this depends on the
 
 ### Requirements
 - **gs** command, from Ghostscript: present in most Linux distributions.
-- **bc** command, from Basic Calulator: present in most Linux distributions.
+- **bc** command, from Basic Calculator: present in most Linux distributions.
 - **Bash** : present in most Linux distributions
 - Optional: **Nemo** file manager, to use the context menu entry ("right-click" menu) in the file manager.  
         It is the default file manager for some Linux distributions like Linux Mint, but can be installed on others like Ubuntu.
