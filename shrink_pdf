@@ -49,6 +49,7 @@ function press_any_key () {
 
 # Exit this script with an exit code, possibly after a "press any key"
 function exit_script () {
+    local function_name=${FUNCNAME}
     local exit_message
     if [ $# -ge 2 ]; then
         exit_message="${2}"
@@ -60,8 +61,8 @@ function exit_script () {
     if [ $# -ge 1 ]; then
         exit ${1}
     else
-        echo "$(eval_gettext "\${ERR}ERROR: function called with incorrect number of parameter.\${RESET}" )" 1>&2
-        exit 255    # bug: function called with incorrect number of parameter
+        echo "$(eval_gettext "\${ERR}ERROR: \${function_name} function called with incorrect number of parameter.\${RESET}" )" 1>&2
+        exit_script 255    # bug: function called with incorrect number of parameter
     fi
 }
 
@@ -100,11 +101,12 @@ function show_help () {
     echo "$( eval_gettext "  255  Program error (bug): wrong number of arguments for a function call, etc." )"
     echo
     echo "$( eval_gettext "Examples:" )"
-    echo "$( eval_gettext "  \${this_script_name} ./big_doc.pdf ./another_doc.pdf" )"
-    echo "$( eval_gettext "      This will try to shrink the two pdf files." )" 
     echo
-    echo "$( eval_gettext "  \${this_script_name} -x ./big_doc.pdf" )"
-    echo "$( eval_gettext "      -x (or --extreme_shrink) will try to shrink even more." )"
+    echo "$( eval_gettext "\${this_script_name} ./big_doc.pdf ./another_doc.pdf" )"
+    echo "$( eval_gettext "  This will try to shrink the two pdf files." )" 
+    echo
+    echo "$( eval_gettext "\${this_script_name} -x ./big_doc.pdf" )"
+    echo "$( eval_gettext "  With the -x option (or --extreme_shrink) this will try to shrink even more." )"
     echo
 }
 
@@ -233,9 +235,10 @@ function path_without_extension () {
 # $2 is the required number of digits after the decimal point
 # Return the result to the Standard Output
 function divide_by_1000 () {
+    local function_name=${FUNCNAME}
     if [ $# -ne 2 ]; then
-        echo "$(eval_gettext "\${ERR}ERROR: function called with incorrect number of parameter.\${RESET}" )" 1>&2
-        return 255    # bug: function called with incorrect number of parameter
+        echo "$(eval_gettext "\${ERR}ERROR: \${function_name} function called with incorrect number of parameter.\${RESET}" )" 1>&2
+        exit_script 255    # bug: function called with incorrect number of parameter
     fi
     echo "scale=$2; $1/1000" | bc -l
 }
@@ -246,9 +249,10 @@ function divide_by_1000 () {
 # Return the result to the Standard Output
 # Example: return "96.8" if $1 is 5808000 and $2 is 184000
 function shrink_percent () {
+    local function_name=${FUNCNAME}
     if [ $# != 2 ]; then
-        echo "$(eval_gettext "\${ERR}ERROR: function called with incorrect number of parameter.\${RESET}" )" 1>&2
-        return 255    # bug: function called with incorrect number of parameter
+        echo "$(eval_gettext "\${ERR}ERROR: \${function_name} function called with incorrect number of parameter.\${RESET}" )" 1>&2
+        exit_script 255    # bug: function called with incorrect number of parameter
     fi
     echo "scale=1; 100-$2*100/$1" | bc -l
 }

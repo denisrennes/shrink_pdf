@@ -1,0 +1,52 @@
+.TH SHRINK_PDF "1" "February 2026" "shrink_pdf 1.2.0" "User Commands"
+.SH NAME
+shrink_pdf \- Tries to shrink the size of PDF files
+.SH SYNOPSIS
+.B shrink_pdf
+[\fI\,OPTION\/\fR]... \fI\,PDF_FILE\/\fR...
+.SH DESCRIPTION
+shrink_pdf tries to shrink the size of PDF files.
+It works particularly well with PDF files containing unoptimized images, such as documents scanned with xsane.
+.PP
+If successful, i.e., if the file has been reduced by at least 10%, the original file is renamed "<name>.ORIGINAL[.ext]" and the reduced file takes its name.
+When the reduction is less than 10%, shrink_pdf reports this and leaves the document unchanged.
+.SS "OPTION:"
+.TP
+\fB\-k\fR  \fB\-\-press_any_key\fR
+Wait for any key to be pressed at the end.
+.TP
+\fB\-x\fR  \fB\-\-extreme_shrink\fR
+Try to shrink even more, at the expense of quality.
+.TP
+\fB\-\-version\fR
+Output version information and exit.
+.TP
+\fB\-\-help\fR
+Display this help and exit.
+.SS "PDF_FILE:"
+.IP
+One or more PDF files to shrink.
+.SS "Exit status:"
+.TP
+0
+Ok. (Some files may not be shrinked because already optimized.)
+.TP
+1
+Some files with errors trying to shrink or rename them.
+.TP
+253
+Error: missing prerequisite.
+.TP
+254
+Error in the arguments of the calling command line.
+.TP
+255
+Program error (bug): wrong number of arguments for a function call, etc.
+.SH EXAMPLES
+shrink_pdf ./big_doc.pdf ./another_doc.pdf
+.IP
+This will try to shrink the two pdf files.
+.PP
+shrink_pdf \-x ./big_doc.pdf
+.IP
+With the \-x option (or \-\-extreme_shrink) this will try to shrink even more.

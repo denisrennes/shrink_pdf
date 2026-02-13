@@ -41,6 +41,7 @@ function press_any_key () {
 # $1 Mandatory. Exit code.
 # $2 Optional.  Message for the press_any_key function. Default: "\${HIGHLIGHT}Press any key to finish...\${RESET}"
 function exit_script () {
+    local function_name=${FUNCNAME}
     local exit_message
     if [ $# -ge 2 ]; then
         exit_message="${2}"
@@ -52,7 +53,7 @@ function exit_script () {
     if [ $# -ge 1 ]; then
         exit ${1}
     else
-        echo "$(eval_gettext "\${ERR}ERROR: \${FUNCNAME} function called with incorrect number of parameter.\${RESET}" )" 1>&2
+        echo "$(eval_gettext "\${ERR}ERROR: \${function_name} function called with incorrect number of parameter.\${RESET}" )" 1>&2
         exit 255    # bug: function called with incorrect number of parameter
     fi
 }
@@ -86,8 +87,9 @@ function yes_or_no () {
 # $3 Mandatory. Destination path.
 # $4 Optional.  Access rights to set to the installed file. Example: "u=rwx,g=rx,o=rx"
 function install_file () {
+    local function_name=${FUNCNAME}
     if [ $# -lt 3 ] || [ $# -gt 4 ]; then
-        echo "$(eval_gettext "\${ERR}ERROR: \${FUNCNAME} function called with incorrect number of parameter.\${RESET}" )" 1>&2
+        echo "$(eval_gettext "\${ERR}ERROR: \${function_name} function called with incorrect number of parameter.\${RESET}" )" 1>&2
         exit_script 255    # bug: function called with incorrect parameter
     fi
     local file_description=$1
@@ -95,10 +97,10 @@ function install_file () {
     local dest_path=$3
 
     if [ ! -f "${src_path}" ]; then
-        echo "$(eval_gettext "\${ERR}ERROR: \${FUNCNAME} function called with a wrong parameter.\${RESET}" )" 1>&2
+        echo "$(eval_gettext "\${ERR}ERROR: \${function_name} function called with a wrong parameter.\${RESET}" )" 1>&2
         exit_script 255    # bug: function called with incorrect parameter
     fi
-    echo -n "$( eval_gettext "Installation of \"\${file_description}\": \"\${dest_path}\"... " )"
+    echo -n "$( eval_gettext "Installation of \${file_description}: \"\${dest_path}\"... " )"
     if ! sudo cp "${src_path}" "${dest_path}" ; then
         echo "$(eval_gettext "\${ERR}ERROR: failed to install the file.\${RESET}" )" 1>&2
         exit_script 2   # Installation failure
@@ -113,6 +115,26 @@ function install_file () {
     echo "$(gettext "ok.")"
 }
 
+# Create the directory tree of a FILE: mkdir -p <directory_tree> then (optional)
+# $1 Mandatory. FILE path. The file name will be removed to create its directory tree.
+function mktree () {
+    local function_name=${FUNCNAME}
+    if [ $# -ne 1 ]; then
+        echo "$(eval_gettext "\${ERR}ERROR: \${function_name} function called with incorrect number of parameter.\${RESET}" )" 1>&2
+        exit_script 255    # bug: function called with incorrect parameter
+    fi
+    local directory_tree=$(dirname "$1")
+
+    if [ ! -d "${directory_tree}" ]; then
+        echo -n "$( eval_gettext "Creation of the directory tree \"\${directory_tree}\"... " )"
+        if ! sudo mkdir -p "${directory_tree}" ; then
+            echo "$(eval_gettext "\${ERR}ERROR: failed to create the directory tree.\${RESET}" )" 1>&2
+            exit_script 2   # Installation failure
+        else
+            echo "$(gettext "ok.")"
+        fi
+    fi
+}
 
 
 # Source directory: where is this script currently running
@@ -145,11 +167,11 @@ fi
 
 # Install confirmation
 echo
-echo "$( eval_gettext "This will install a shell command \"\${SCRIPT_FILENAME}\"." )"
+echo "$( eval_gettext "This will install the shell command \"\${SCRIPT_FILENAME}\"." )"
 if [ "${NEMO_PRESENT}" = "true" ]; then
     echo "$( eval_gettext "This will also install a new \"\${NEMO_ACTION_MENU}\" context menu entry (\"right-click\") in Nemo, the file manager, for PDF files." )"
 else
-    echo "$( eval_gettext "As the file manager Nemo has NOT been detected, this will NOT install a new \"\${NEMO_ACTION_MENU}\" context menu entry (\"right-click\") in Nemo, for PDF files." )"
+    echo "$( eval_gettext "The file manager Nemo has NOT been detected. If you install it later, you will see a \"\${NEMO_ACTION_MENU}\" context menu entry (\"right-click\") of PDF files." )"
 fi
 if ! yes_or_no "$(gettext "Continue?")"; then
     echo "$(gettext "Canceled, ok.")"
@@ -170,7 +192,7 @@ echo "$( gettext "ok for elevated privileges (sudo).")"
 echo
 
 # Install the script for all users of the system, in /usr/bin (should be in $PATH)
-file_description="main command"
+file_description="$( gettext "the main command" )"
 source_file_path="${SOURCE_DIR}/${SCRIPT_FILENAME}"
 dest_file_path="/usr/bin/${SCRIPT_FILENAME}"
 install_file "${file_description}" "${source_file_path}" "${dest_file_path}"
@@ -180,34 +202,33 @@ LOCALE_FILE_NAME="shrink_pdf.mo"
 LOCALE_DIRECTORY="/usr/share/locale"
 
 # Install the 'fr' translation files of the script for all users of the system, in /usr/share/locale
-file_description="French translation"
+file_description="$( gettext "the French translation" )"
 lang="fr"
 source_file_path="${SOURCE_DIR}/locale/${lang}/LC_MESSAGES/${LOCALE_FILE_NAME}"
 dest_file_path="${LOCALE_DIRECTORY}/${lang}/LC_MESSAGES/${LOCALE_FILE_NAME}"
 install_file "${file_description}" "${source_file_path}" "${dest_file_path}"
 
 
-# If Nemo is present, install the Nemo action for all users of the system
-if [ "${NEMO_PRESENT}" = "true" ]; then
-    file_description="Nemo action"
-    nemo_action_filename="shrink_pdf.nemo_action"
-    source_file_path="${SOURCE_DIR}/${nemo_action_filename}"
-    dest_file_path="/usr/share/nemo/actions/${nemo_action_filename}"
-    install_file "${file_description}" "${source_file_path}" "${dest_file_path}"
-fi
+# Install the Nemo action for all users of the system
+file_description="$( eval_gettext "the Nemo action \"\${NEMO_ACTION_MENU}\"" )"
+nemo_action_filename="shrink_pdf.nemo_action"
+source_file_path="${SOURCE_DIR}/${nemo_action_filename}"
+dest_file_path="/usr/share/nemo/actions/${nemo_action_filename}"
+mktree "${dest_file_path}"      # create the directory tree if needed (Nemo not installed yet)
+install_file "${file_description}" "${source_file_path}" "${dest_file_path}"
 
 # Install the English man page for all users of the system
-file_description="English man page"
+file_description="$( gettext "the English man page" )"
 man_page_en_filename="${SCRIPT_FILENAME}.1.gz"
-source_file_path="${SOURCE_DIR}/${man_page_en_filename}"
+source_file_path="${SOURCE_DIR}/man/${man_page_en_filename}"
 dest_file_path="/usr/share/man/man1/${man_page_en_filename}"
 install_file "${file_description}" "${source_file_path}" "${dest_file_path}"
 
 
 # Install the French man page for all users of the system
-file_description="French man page"
+file_description="$( gettext "the French man page" )"
 lang="fr"
-source_file_path="${SOURCE_DIR}/${SCRIPT_FILENAME}-${lang}.1.gz"
+source_file_path="${SOURCE_DIR}/man/${SCRIPT_FILENAME}.${lang}.1.gz"
 dest_file_path="/usr/share/man/${lang}/man1/${SCRIPT_FILENAME}.1.gz"
 install_file "${file_description}" "${source_file_path}" "${dest_file_path}"
 
@@ -221,4 +242,3 @@ fi
 
 press_any_key
 exit 0
-

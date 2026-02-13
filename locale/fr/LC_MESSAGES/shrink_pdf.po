@@ -5,44 +5,191 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.1.0\n"
+"Project-Id-Version: shrink_pdf 1.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-10 20:14+0100\n"
+"POT-Creation-Date: 2026-02-13 12:40+0100\n"
 "PO-Revision-Date: 2026-01-15 16:00+0100\n"
 "Last-Translator: Denis <denisreindeer@gmail.com>\n"
-"Language-Team: French <traduc@traduc.org>\n"
+"Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: shrink_pdf:45
+#: shrink_pdf:44
 #, sh-format
 msgid "${HIGHLIGHT}Press any key...${RESET}"
 msgstr "${HIGHLIGHT}Appuyez sur une touche...${RESET}"
 
-#: shrink_pdf:57 shrink_pdf:401
+#: shrink_pdf:57
 #, sh-format
 msgid "${HIGHLIGHT}Press any key to finish...${RESET}"
 msgstr "${HIGHLIGHT}Appuyez sur une touche pour terminer...${RESET}"
 
-#: shrink_pdf:164
+#: shrink_pdf:64 shrink_pdf:240 shrink_pdf:254
+#, sh-format
+msgid ""
+"${ERR}ERROR: ${function_name} function called with incorrect number of "
+"parameter.${RESET}"
+msgstr ""
+"${ERR}ERREUR: appel de la fonction ${function_name} avec un nombre incorrect de paramètres."
+"${RESET}"
+
+#: shrink_pdf:77
+#, sh-format
+msgid "${this_script_name} tries to shrink the size of PDF files."
+msgstr "${this_script_name} tente de réduire la taille des fichiers PDF."
+
+#: shrink_pdf:79
+#, sh-format
+msgid ""
+"It works particularly well with PDF files containing unoptimized images, "
+"such as documents scanned with xsane."
+msgstr ""
+"Cela fonctionne particulièrement bien avec les fichiers PDF contenant des images non optimisées, "
+"tels que les documents scannés avec xsane."
+
+#: shrink_pdf:81
+#, sh-format
+msgid ""
+"If successful, i.e., if the file has been reduced by at least 10%, the "
+"original file is renamed \"<name>.ORIGINAL[.ext]\" and the reduced file "
+"takes its name."
+msgstr ""
+"En cas de succès, c'est à dire si le fichier a été réduit d'au moins 10 %, "
+" le fichier original est renommé \"<nom>.ORIGINAL[.ext]\" et le fichier réduit "
+"prend son nom."
+
+#: shrink_pdf:82
+#, sh-format
+msgid ""
+"When the reduction is less than 10%, ${this_script_name} reports this and "
+"leaves the document unchanged."
+msgstr ""
+"Lorsque la réduction est inférieure à 10%, ${this_script_name} le signale "
+"et laisse le document inchangé."
+
+#: shrink_pdf:84
+#, sh-format
+msgid "Usage:    ${this_script_name} [OPTION]... PDF_FILE..."
+msgstr "Usage:    ${this_script_name} [OPTION]... FICHIER_PDF..."
+
+#: shrink_pdf:86
+#, sh-format
+msgid "OPTION:"
+msgstr ""
+
+#: shrink_pdf:87
+#, sh-format
+msgid "  -k  --press_any_key   Wait for any key to be pressed at the end."
+msgstr "  -k  --press_any_key   Attend l'appui sur une touche avant de sortir."
+
+#: shrink_pdf:88
+#, sh-format
+msgid ""
+"  -x  --extreme_shrink  Try to shrink even more, at the expense of quality."
+msgstr ""
+"  -x  --extreme_shrink  Tente de réduire encore plus, aux dépens de la qualité."
+
+#: shrink_pdf:90
+#, sh-format
+msgid "      --version         Output version information and exit."
+msgstr "      --version         Affiche la version et sort."
+
+#: shrink_pdf:91
+#, sh-format
+msgid "      --help            Display this help and exit."
+msgstr "      --help            Affiche cette aide et sort."
+
+#: shrink_pdf:93
+#, sh-format
+msgid "PDF_FILE:"
+msgstr "FICHIER_PDF"
+
+#: shrink_pdf:94
+#, sh-format
+msgid "    One or more PDF files to shrink."
+msgstr "   Un ou plusieurs fichiers PDF à réduire."
+
+#: shrink_pdf:96
+#, sh-format
+msgid "Exit status:"
+msgstr "Code de sortie (Exit Status):"
+
+#: shrink_pdf:97
+#, sh-format
+msgid "    0  Ok. (Some files may not be shrinked because already optimized.)"
+msgstr "    0  Ok. (Certains fichiers ne sont peut-être pas réduits car déjà optimisés.)"
+
+#: shrink_pdf:98
+#, sh-format
+msgid "    1  Some files with errors trying to shrink or rename them."
+msgstr "    1  Erreurs pour certains fichiers pendant la réduction ou le renommage."
+
+#: shrink_pdf:99
+#, sh-format
+msgid "  253  Error: missing prerequisite."
+msgstr "  253  Erreur: prérequis manquant."
+
+#: shrink_pdf:100
+#, sh-format
+msgid "  254  Error in the arguments of the calling command line."
+msgstr "  254  Erreur d'arguments dans la ligne de commande."
+
+#: shrink_pdf:101
+#, sh-format
+msgid ""
+"  255  Program error (bug): wrong number of arguments for a function call, "
+"etc."
+msgstr ""
+"  255  Erreur de programme (bug): nombre d'arguments incorrect à l'appel d'une fonction, "
+"etc."
+
+#: shrink_pdf:103
+#, sh-format
+msgid "Examples:"
+msgstr "Exemples"
+
+#: shrink_pdf:105
+#, sh-format
+msgid "${this_script_name} ./big_doc.pdf ./another_doc.pdf"
+msgstr "${this_script_name} ./gros_doc.pdf ./un_autre_doc.pdf"
+
+#: shrink_pdf:106
+#, sh-format
+msgid "  This will try to shrink the two pdf files."
+msgstr "  Cela va tenter de réduire les deux fichiers."
+
+#: shrink_pdf:108
+#, sh-format
+msgid "${this_script_name} -x ./big_doc.pdf"
+msgstr "${this_script_name} -x ./gros_doc.pdf"
+
+#: shrink_pdf:109
+#, sh-format
+msgid ""
+"  With the -x option (or --extreme_shrink) this will try to shrink even more."
+msgstr ""
+"  Avec l'option -x (ou --extreme_shrink) cela va tenter de réduire encore plus."
+
+#: shrink_pdf:166
 #, sh-format
 msgid "${ERR}ERROR: unknown option argument \"${arg}\".${RESET}"
 msgstr "${ERR}ERREUR: argument option incorrect \"${arg}\".${RESET}"
 
-#: shrink_pdf:173
+#: shrink_pdf:175
 #, sh-format
 msgid "${ERR}ERROR: cannot access \"${arg}\". No such file.${RESET}"
-msgstr "${ERR}ERREUR: accès impossible à \"${arg}\". Ce fichier n'existe pas.${RESET}"
+msgstr ""
+"${ERR}ERREUR: accès impossible à \"${arg}\". Ce fichier n'existe pas.${RESET}"
 
-#: shrink_pdf:180
+#: shrink_pdf:182
 #, sh-format
 msgid "${ERR}ERROR: at least one FILE argument is required.${RESET}"
 msgstr "${ERR}ERREUR: au moins un argument FICHIER est requis.${RESET}"
 
-#: shrink_pdf:261
+#: shrink_pdf:267
 #, sh-format
 msgid ""
 "${ERR}ERROR: The \"gs\" command is required but not installed. "
@@ -51,7 +198,7 @@ msgstr ""
 "${ERR}ERREUR: La commande \"gs\" est requise mais pas installée. "
 "(Ghostscript)${RESET}"
 
-#: shrink_pdf:267
+#: shrink_pdf:273
 #, sh-format
 msgid ""
 "${ERR}ERROR: The \"bc\" command is required but not installed. (Basic "
@@ -60,19 +207,19 @@ msgstr ""
 "${ERR}ERREUR: La commande \"bc\" est requise mais pas installée. (Basic "
 "Calculator)${RESET}"
 
-#: shrink_pdf:280
+#: shrink_pdf:286
 msgid "Shrink mode: Extreme"
 msgstr "Mode de réduction: Extrême"
 
-#: shrink_pdf:284
+#: shrink_pdf:290
 msgid ".TEMP_SHRINKED"
 msgstr ".TEMP_REDUIT"
 
-#: shrink_pdf:285
+#: shrink_pdf:291
 msgid ".ORIGINAL"
 msgstr ".ORIGINAL"
 
-#: shrink_pdf:307
+#: shrink_pdf:320
 #, sh-format
 msgid ""
 "${WARN}SKIPPED${RESET} because it is probably the shrinking result of "
@@ -81,7 +228,7 @@ msgstr ""
 "${WARN}IGNORÉ${RESET} parce que c'est probablement le résultat de la "
 "réduction de \"${bak_file_filename}\""
 
-#: shrink_pdf:315
+#: shrink_pdf:328
 #, sh-format
 msgid ""
 "${WARN}SKIPPED${RESET} because it has been already shrinked before. To "
@@ -90,7 +237,7 @@ msgstr ""
 "${WARN}IGNORÉ${RESET} parce qu'il a déjà été réduit avant. Pour le réduire "
 "une autre fois, renommez-le: enlevez \"${ORIGINAL_SUBEXT}\"."
 
-#: shrink_pdf:325
+#: shrink_pdf:339
 #, sh-format
 msgid ""
 "${ERR}ERROR: unable to delete \"${result_file}\" before starting shrinking. "
@@ -99,7 +246,7 @@ msgstr ""
 "${ERR}ERREUR: impossible d'effacer \"${result_file}\" avant de démarrer la "
 "réduction. Vérifiez les droits d'accès.${RESET}"
 
-#: shrink_pdf:339
+#: shrink_pdf:354
 #, sh-format
 msgid ""
 "${ERR}ERROR: The shrinking command failed and returned an error. Most likely "
@@ -108,7 +255,7 @@ msgstr ""
 "${ERR}ERREUR: La commande de réduction a échoué et a retourné une erreur. Ce "
 "fichier n'est probablement pas un fichier PDF valide.${RESET}"
 
-#: shrink_pdf:343 shrink_pdf:372
+#: shrink_pdf:358 shrink_pdf:390
 #, sh-format
 msgid ""
 "${ERR}ERROR: something went wrong trying to delete the result file. Check "
@@ -117,23 +264,21 @@ msgstr ""
 "${ERR}ERREUR: quelque chose s'est mal passé en essayant d'effacer le fichier "
 "résultat. Vérifiez les droits d'accès.${RESET}"
 
-#: shrink_pdf:351
+#: shrink_pdf:367
 #, sh-format
 msgid "${ERR}ERROR: something went wrong, no shrinking result file.${RESET}"
 msgstr ""
 "${ERR}ERREUR: quelque chose s'est mal passé, pas de fichier résultat de la "
 "réduction.${RESET}"
 
-#: shrink_pdf:366
+#: shrink_pdf:383
 #, sh-format
 msgid ""
-"${WARN}NOT shrinked:${RESET} most likely this file is already as small as "
-"possible."
+"${WARN}NOT shrinked:${RESET} most likely this file is already optimized."
 msgstr ""
-"${WARN}NON réduit:${RESET} ce fichier est probablement aussi petit que "
-"possible."
+"${WARN}NON réduit:${RESET} ce fichier est probablement déjà optimisé."
 
-#: shrink_pdf:383
+#: shrink_pdf:402
 #, sh-format
 msgid ""
 "${ERR}ERROR: something went wrong after shrinking. Unable to rename the "
@@ -143,7 +288,7 @@ msgstr ""
 "de renommer le fichier original en \"${bak_file}\". Vérifiez les droits "
 "d'accès.${RESET}"
 
-#: shrink_pdf:389
+#: shrink_pdf:409
 #, sh-format
 msgid ""
 "${ERR}ERROR: something went wrong after shrinking. Unable to rename the "
@@ -154,7 +299,7 @@ msgstr ""
 "de renommer le fichier résultat, de son nom temporaire \"${result_file}\" "
 "vers le nom du fichier original. Vérifiez les droits d'accès.${RESET}"
 
-#: shrink_pdf:393
+#: shrink_pdf:414
 #, sh-format
 msgid ""
 "${OK}${shrink_percent} % shrinked.${RESET}  (Original: "
@@ -163,8 +308,37 @@ msgstr ""
 "${OK}${shrink_percent} % réduit.${RESET}  (Original: "
 "\"${bak_file_filename}\")"
 
-#: shrink_pdf:399
+#: shrink_pdf:422
 #, sh-format
-msgid "${OK}OKAY.${RESET}"
-msgstr "${OK}OK.${RESET}"
+msgid "${OK}${nb_file_ok} file successfully shrinked.${RESET}"
+msgid_plural "${OK}${nb_file_ok} files successfully shrinked.${RESET}"
+msgstr[0] "${OK}${nb_file_ok} fichier réduit avec succès.${RESET}"
+msgstr[1] "${OK}${nb_file_ok} fichiers réduits avec succès.${RESET}"
+
+#: shrink_pdf:427
+#, sh-format
+msgid ""
+"${OK}${nb_file_not_shrinked} file NOT shrinked: already small or previously "
+"processed.${RESET}"
+msgid_plural ""
+"${OK}${nb_file_not_shrinked} files NOT shrinked: already small or previously "
+"processed.${RESET}"
+msgstr[0] ""
+"${OK}${nb_file_not_shrinked} fichier NON réduit: déjà petit ou déjà traîté "
+"précédemment.${RESET}"
+msgstr[1] ""
+"${OK}${nb_file_not_shrinked} fichiers NON réduits: déjà petits ou déjà traîtés "
+"précédemment.${RESET}"
+
+#: shrink_pdf:433
+#, sh-format
+msgid ""
+"${ERR}${nb_file_error} file with error trying to shrink or rename it.${RESET}"
+msgid_plural ""
+"${ERR}${nb_file_error} files with errors trying to shrink or rename them."
+"${RESET}"
+msgstr[0] ""
+"${ERR}${nb_file_error} fichier ayant eu une erreur pendant la réduction ou le renommage.${RESET}"
+msgstr[1] ""
+"${ERR}${nb_file_error} fichiers ayant eu une erreur pendant la réduction ou le renommage.${RESET}"
 

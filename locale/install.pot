@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 19:47+0100\n"
+"POT-Creation-Date: 2026-02-13 12:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,135 +22,160 @@ msgstr ""
 msgid "${HIGHLIGHT}Press any key...${RESET}"
 msgstr ""
 
-#: install.sh:46
+#: install.sh:49
 #, sh-format
 msgid "${HIGHLIGHT}Press any key to finish...${RESET}"
 msgstr ""
 
-#: install.sh:53
+#: install.sh:56 install.sh:92 install.sh:123
 #, sh-format
 msgid ""
-"${ERR}ERROR: function called with incorrect number of parameter.${RESET}"
+"${ERR}ERROR: ${function_name} function called with incorrect number of "
+"parameter.${RESET}"
 msgstr ""
 
-#: install.sh:64
+#: install.sh:67
 msgid " [y/n]: "
 msgstr ""
 
-#: install.sh:66
+#: install.sh:69
 msgid "[y/n]: "
 msgstr ""
 
-#: install.sh:68
+#: install.sh:71
 msgid "Yes or No? [y/n]: "
 msgstr ""
 
-#: install.sh:74
+#: install.sh:77
 msgid "Y"
 msgstr ""
 
-#: install.sh:75
+#: install.sh:78
 msgid "N"
 msgstr ""
 
-#: install.sh:88
+#: install.sh:100
 #, sh-format
 msgid ""
-"${ERR}ERROR: ${FUNCNAME} function called with incorrect number of parameter."
-"${RESET}"
+"${ERR}ERROR: ${function_name} function called with a wrong parameter.${RESET}"
 msgstr ""
 
-#: install.sh:96
+#: install.sh:103
 #, sh-format
-msgid ""
-"${ERR}ERROR: ${FUNCNAME} function called with a wrong parameter.${RESET}"
+msgid "Installation of ${file_description}: \"${dest_path}\"... "
 msgstr ""
 
-#: install.sh:99
-#, sh-format
-msgid "Installation of \"${file_description}\": \"${dest_path}\"... "
-msgstr ""
-
-#: install.sh:101
+#: install.sh:105
 #, sh-format
 msgid "${ERR}ERROR: failed to install the file.${RESET}"
 msgstr ""
 
-#: install.sh:107
+#: install.sh:111
 #, sh-format
 msgid "${ERR}ERROR: failed to set access rights to the file.${RESET}"
 msgstr ""
 
-#: install.sh:111
+#: install.sh:115 install.sh:134
 msgid "ok."
 msgstr ""
 
-#: install.sh:122
+#: install.sh:129
+#, sh-format
+msgid "Creation of the directory tree \"${directory_tree}\"... "
+msgstr ""
+
+#: install.sh:131
+#, sh-format
+msgid "${ERR}ERROR: failed to create the directory tree.${RESET}"
+msgstr ""
+
+#: install.sh:146
 msgid "Shrink PDF"
 msgstr ""
 
-#: install.sh:127
+#: install.sh:151
 #, sh-format
 msgid ""
 "${ERR}ERROR: The \"gs\" command is required but not installed. "
 "(Ghostscript)${RESET}"
 msgstr ""
 
-#: install.sh:133
+#: install.sh:157
 #, sh-format
 msgid ""
 "${ERR}ERROR: The \"bc\" command is required but not installed. (Basic "
 "Calulator)${RESET}"
 msgstr ""
 
-#: install.sh:146
+#: install.sh:170
 #, sh-format
-msgid "This will install a shell command \"${SCRIPT_FILENAME}\"."
+msgid "This will install the shell command \"${SCRIPT_FILENAME}\"."
 msgstr ""
 
-#: install.sh:148
+#: install.sh:172
 #, sh-format
 msgid ""
 "This will also install a new \"${NEMO_ACTION_MENU}\" context menu entry "
 "(\"right-click\") in Nemo, the file manager, for PDF files."
 msgstr ""
 
-#: install.sh:150
+#: install.sh:174
 #, sh-format
 msgid ""
-"As the file manager Nemo has NOT been detected, this will NOT install a new "
-"\"${NEMO_ACTION_MENU}\" context menu entry (\"right-click\") in Nemo, for "
+"The file manager Nemo has NOT been detected. If you install it later, you "
+"will see a \"${NEMO_ACTION_MENU}\" context menu entry (\"right-click\") of "
 "PDF files."
 msgstr ""
 
-#: install.sh:152
+#: install.sh:176
 msgid "Continue?"
 msgstr ""
 
-#: install.sh:153
+#: install.sh:177
 msgid "Canceled, ok."
 msgstr ""
 
-#: install.sh:160
+#: install.sh:184
 msgid "You need elevated privileges to install: "
 msgstr ""
 
-#: install.sh:163
+#: install.sh:187
 #, sh-format
 msgid ""
 "${ERR}ERROR: Installation canceled: Failed to get elevated privileges (sudo)."
 "${RESET}"
 msgstr ""
 
-#: install.sh:166
+#: install.sh:190
 msgid "ok for elevated privileges (sudo)."
 msgstr ""
 
-#: install.sh:215
+#: install.sh:195
+msgid "the main command"
+msgstr ""
+
+#: install.sh:205
+msgid "the French translation"
+msgstr ""
+
+#: install.sh:213
+#, sh-format
+msgid "the Nemo action \"${NEMO_ACTION_MENU}\""
+msgstr ""
+
+#: install.sh:221
+msgid "the English man page"
+msgstr ""
+
+#: install.sh:229
+msgid "the French man page"
+msgstr ""
+
+#: install.sh:238
 msgid "The installation succeeded."
 msgstr ""
 
-#: install.sh:217
+#: install.sh:240
 #, sh-format
 msgid ""
 "You may have to close and relaunch the file manager Nemo to use the new "

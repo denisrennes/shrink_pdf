@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail       # exit immediately in case of error
 
 # Generate the man pages for shrink_pdf in ENglish eand French, using help2man
 
@@ -12,10 +13,10 @@ export TEXTDOMAINDIR="$(cd "$(dirname "$0")" && pwd)/locale"
 # $1: Optional message to display. Default: "Press any key...'"
 function press_any_key () {
     echo
-    if [[ -z ${1} ]]; then
-        echo "$(gettext "Press any key...")"
-    else
+    if [ $# -ge 1 ]; then
         echo "${1}"
+    else
+        echo "$(gettext "Press any key...")"
     fi
     read -s -n 1 
 }
@@ -40,10 +41,12 @@ function yes_or_no () {
 # Source directory: where is this script currently running
 source_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-# install location for the script
 script_filename="shrink_pdf"
 
-# Install confirmation
+man_dir="${source_dir}/man"
+
+
+# confirmation
 echo
 echo "$( eval_gettext "This will generate the English and French man pages for \"\${script_filename}\"." )"
 if ! yes_or_no "$(gettext "Continue?")"; then
@@ -53,18 +56,31 @@ fi
 
 echo
 
-# Generate the English man page
-file_name="${script_filename}.1"
-help2man --no-info "${script_filename}" >"${source_dir}/${file_name}"
-source_file_path="${source_dir}/${file_name}"
-if [ -f "${source_file_path}.gz" ]; then
-    rm "${source_file_path}.gz"
+echo -n "Generate the English man page... "
+man_file_name="${script_filename}.1"
+man_gz_file_name="${man_file_name}.gz"
+if [ -f "${man_dir}/${man_gz_file_name}" ]; then
+    rm "${man_dir}/${man_gz_file_name}"
 fi
-gzip "${source_file_path}"
+gzip -k "${man_dir}/${man_file_name}"
+echo "ok."
+
+echo
+
+echo -n "Generate the French man page... "
+lang="fr"
+man_file_name="${script_filename}.${lang}.1"
+man_gz_file_name="${man_file_name}.gz"
+if [ -f "${man_dir}/${man_gz_file_name}" ]; then
+    rm "${man_dir}/${man_gz_file_name}"
+fi
+gzip -k "${man_dir}/${man_file_name}"
+echo "ok."
+
 
 # The End
 echo
-echo "$(gettext "ok.")"
+echo "$(gettext "OKAY.")"
 
 press_any_key
 exit 0
